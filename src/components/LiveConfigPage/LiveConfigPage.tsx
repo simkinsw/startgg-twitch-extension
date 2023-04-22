@@ -30,9 +30,31 @@ const LiveConfigPage = () => {
 
     useEffect(() => {
         if(apiToken) {
-            console.log("New token received, going to fetch data");
+            console.log("New token received, validating...");
+            validateApiToken();
         }
     }, [apiToken]);
+
+    const validateApiToken = async () => {
+        const input = { "query": "query { currentUser { id } }" };
+        fetch("https://api.start.gg/gql/alpha", {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiToken}`
+            },
+            body: JSON.stringify(input),
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(error => {
+                    throw new Error(error.message);
+                });
+            }
+            return response.json();
+        })
+        .then(data => console.log(`Token validated, current user: ${data.data.currentUser.id}`))
+        .catch(error => console.error(`Failed to validate token: ${error.message}`));
+    }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
