@@ -6,6 +6,7 @@ module.exports = {
           node:"current"
         }
       }],
-      ["@babel/preset-react", {"runtime": "automatic"}]
+      ["@babel/preset-react", {"runtime": "automatic"}],
+      ["@babel/preset-typescript"]
     ]
   }
