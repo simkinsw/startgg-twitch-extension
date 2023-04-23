@@ -69,6 +69,10 @@ const LiveConfigPage = () => {
             const response = await Startgg.query(apiToken, input);
             setData(response.data);
             setValidData(Validation.Valid);
+
+            // Update config for new clients, and publish to pubsub for existing ones
+            twitch.configuration.set("broadcaster", "1", JSON.stringify(response.data));
+            twitch.send("broadcast", "text/plain", JSON.stringify(response.data));
         } catch (error) {
             console.error(`Failed to refresh data: ${error}`);
             setValidData(Validation.Invalid);
