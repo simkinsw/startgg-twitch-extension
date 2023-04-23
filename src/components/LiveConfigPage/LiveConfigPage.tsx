@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Startgg } from "../util/Startgg/Startgg";
+import { Startgg, StartggToken } from "../util/Startgg/Startgg";
 
 enum Validation {
     Empty = '',
@@ -14,8 +14,6 @@ const LiveConfigPage = () => {
 
     // Token Input/Validation
     const [apiToken, setApiToken] = useState('');
-    const [validToken, setValidToken] = useState(Validation.Empty);
-    const [apiTokenInput, setApiTokenInput] = useState('');
 
     // Response data
     const [data, setData] = useState({});
@@ -46,7 +44,7 @@ const LiveConfigPage = () => {
 
     useEffect(() => {
         let intervalId: ReturnType<typeof setInterval>;
-        if(validToken === Validation.Valid) {
+        if(apiToken.length > 0) {
             refreshData();
             intervalId = setInterval(() => {
                 refreshData();
@@ -57,20 +55,7 @@ const LiveConfigPage = () => {
                 clearInterval(intervalId);
             }
         }
-    }, [validToken]);
-
-    const validateApiToken = async (token: string) => {
-        const input = { "query": "query { currentUser { id } }" };
-        setValidToken(Validation.Validating);
-        try {
-            await Startgg.query(token, input);
-            setApiToken(token);
-            setValidToken(Validation.Valid);
-        } catch (error) {
-            setValidToken(Validation.Invalid)
-            console.error(`Failed to validate token: ${error}`);
-        }
-    }
+    }, [apiToken]);
 
     const refreshData = async () => {
         const input = { 
@@ -90,28 +75,10 @@ const LiveConfigPage = () => {
         }
     }
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        validateApiToken(apiTokenInput);
-        setApiTokenInput("");
-    }
-
-    const handleApiTokenInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setApiTokenInput(event.target.value);
-    }
-    
     return (
         <div className="LiveConfigPage">
             <div className={theme === 'light' ? 'LiveConfigPage-light' : 'LiveConfigPage-dark'} >
-                <form onSubmit={handleSubmit}>
-                    <label>
-                        Enter your startgg api token:
-                        <input type="password" value={apiTokenInput} onChange={handleApiTokenInputChange}/>
-                    </label>
-                    <br></br>
-                    <button type="submit">Save</button>
-                    {validToken}
-                </form>
+                <StartggToken onApiToken={setApiToken}/>
                 <h2>API Data {validData}</h2>
                 <pre>
                 {JSON.stringify(data, null, 2)}
