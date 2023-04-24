@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import "./ConfigPage.css";
+import { StartggToken } from "../util/Startgg/Startgg";
 
 const ConfigPage = () => {
     //fix this to work with tailwind
     const [theme, setTheme] = useState("light");
+    const [valid, setValid] = useState(false);
     const twitch = window.Twitch?.ext;
-
 
     useEffect(() => {
         // do config page setup as needed here
@@ -19,10 +20,17 @@ const ConfigPage = () => {
         }
     });
 
+    const handleApiToken = (token: string) => {
+        setValid(token.length > 0);
+    }
+
     return (
         <div className="Config">
             <div className="text">
-                There is no configuration needed for this extension!
+                <p>Please create a Startgg api token here: <a href="https://start.gg/admin/profile/developer">https://start.gg/admin/profile/developer</a></p>
+                <p>Use the box below to validate the connection</p>
+                <StartggToken onApiToken={handleApiToken}/>
+                <p>{valid ? "Connected!" : "Waiting for api token"}</p>
             </div>
         </div>
     )

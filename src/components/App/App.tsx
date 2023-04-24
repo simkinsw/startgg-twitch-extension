@@ -10,7 +10,7 @@ const App = () => {
     useEffect(() => {
         if (twitch) {
             twitch.listen("broadcast", (target, contentType, body) => {
-                twitch.rig.log(
+                console.log(
                     `New PubSub message!\n${target}\n${contentType}\n${body}`
                 );
             });
@@ -20,8 +20,16 @@ const App = () => {
             });
 
             twitch.onContext((context, delta) => {
+                console.log("onContext");
                 if (delta.includes("theme")) {
                     setTheme(context.theme ?? "light");
+                }
+            });
+
+            twitch.configuration.onChanged(function(){
+                if(twitch.configuration.broadcaster){
+                    console.log('Initial configuration');
+                    console.log(twitch.configuration.broadcaster.content);
                 }
             });
         }
@@ -33,7 +41,7 @@ const App = () => {
                 );
             }
         };
-    });
+    }, []);
 
     return isVisible ? (
         <div className="App">
