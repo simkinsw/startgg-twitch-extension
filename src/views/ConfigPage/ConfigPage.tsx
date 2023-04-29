@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import "./ConfigPage.css";
-import { StartggToken } from "../util/Startgg/Startgg";
+import { StartggToken } from "../../utils/Startgg/Startgg";
 
 const ConfigPage = () => {
-    //fix this to work with tailwind
     const [theme, setTheme] = useState("light");
     const [valid, setValid] = useState(false);
     const twitch = window.Twitch?.ext;

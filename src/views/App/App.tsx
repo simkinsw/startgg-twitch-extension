@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import VideoComponent from "../../components/VideoComponent";
 
 const App = () => {
-    //fix this to work with tailwind
     const [theme, setTheme] = useState("light");
     const [isVisible, setIsVisible] = useState(true);
     const twitch = window.Twitch?.ext;
@@ -41,15 +41,13 @@ const App = () => {
                 );
             }
         };
-    }, []);
+    }, [twitch]);
 
     return isVisible ? (
-        <div className="App">
-            <div className="text">This is the video component</div>
-        </div>
+        <VideoComponent />
     ) : (
         <div className="App">
-            <span className="">THIS SHOULD BE INVISIBLE</span>
+            <span className="">You shouldn't see this (App is hidden)</span>
         </div>
     );
 };

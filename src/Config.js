@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import ConfigPage from "./components/ConfigPage";
+import ConfigPage from "./views/ConfigPage";
 
 const root = createRoot(document.getElementById("root"));
 root.render(
