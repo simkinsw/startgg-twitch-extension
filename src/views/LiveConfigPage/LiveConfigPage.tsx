@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Startgg, StartggToken } from "../util/Startgg/Startgg";
+import { Startgg, StartggToken } from "../../utils/Startgg/Startgg";
 
 enum Validation {
     Empty = '',
@@ -9,7 +9,6 @@ enum Validation {
 }
 
 const LiveConfigPage = () => {
-    //fix this to work with tailwind
     const [theme, setTheme] = useState("light");
 
     // Token Input/Validation
@@ -40,9 +39,31 @@ const LiveConfigPage = () => {
                 twitch.unlisten('broadcast', ()=>console.log('successfully unlistened'))
             }
         }
-    }, []);
+    }, [twitch]);
 
     useEffect(() => {
+        const refreshData = async () => {
+            const input = { 
+                "query": "query GetSets($phaseId: ID) { phase(id: $phaseId) { id name sets(page: 1, perPage: 3) { nodes { id fullRoundText displayScore } } } }",
+                "variables": {
+                    "phaseId": 1285345,
+                }
+            };
+            setValidData(Validation.Validating);
+            try {
+                const response = await Startgg.query(apiToken, input);
+                setData(response.data);
+                setValidData(Validation.Valid);
+    
+                // Update config for new clients, and publish to pubsub for existing ones
+                twitch.configuration.set("broadcaster", "1", JSON.stringify(response.data));
+                twitch.send("broadcast", "text/plain", JSON.stringify(response.data));
+            } catch (error) {
+                console.error(`Failed to refresh data: ${error}`);
+                setValidData(Validation.Invalid);
+            }
+        }
+
         let intervalId: ReturnType<typeof setInterval>;
         if(apiToken.length > 0) {
             refreshData();
@@ -55,29 +76,7 @@ const LiveConfigPage = () => {
                 clearInterval(intervalId);
             }
         }
-    }, [apiToken]);
-
-    const refreshData = async () => {
-        const input = { 
-            "query": "query GetSets($phaseId: ID) { phase(id: $phaseId) { id name sets(page: 1, perPage: 3) { nodes { id fullRoundText displayScore } } } }",
-            "variables": {
-                "phaseId": 1285345,
-            }
-        };
-        setValidData(Validation.Validating);
-        try {
-            const response = await Startgg.query(apiToken, input);
-            setData(response.data);
-            setValidData(Validation.Valid);
-
-            // Update config for new clients, and publish to pubsub for existing ones
-            twitch.configuration.set("broadcaster", "1", JSON.stringify(response.data));
-            twitch.send("broadcast", "text/plain", JSON.stringify(response.data));
-        } catch (error) {
-            console.error(`Failed to refresh data: ${error}`);
-            setValidData(Validation.Invalid);
-        }
-    }
+    }, [apiToken, twitch]);
 
     return (
         <div className="LiveConfigPage">
