@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import "./App.css";
-import VideoComponent from "../../components/VideoComponent";
+import VideoComponent from "../../components/App/VideoComponent";
+import { ThemeProvider } from "@mui/material";
+import { theme as muiTheme } from "../../mui-theme";
 
 const App = () => {
     const [theme, setTheme] = useState("light");
@@ -44,7 +45,9 @@ const App = () => {
     }, [twitch]);
 
     return isVisible ? (
-        <VideoComponent />
+        <ThemeProvider theme={muiTheme}>
+            <VideoComponent />
+        </ThemeProvider>
     ) : (
         <div className="App">
             <span className="">You shouldn't see this (App is hidden)</span>

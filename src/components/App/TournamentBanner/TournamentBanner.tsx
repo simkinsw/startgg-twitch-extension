@@ -1,5 +1,5 @@
 import { FC } from "react";
-import startGGButton from "../../assets/startGGButton.png";
+import startGGButton from "../../../assets/startGGButton.png";
 import { Box, Button, Typography } from "@mui/material";
 
 type TournamentBannerProps = {
@@ -33,6 +33,7 @@ const TournamentBanner: FC<TournamentBannerProps> = ({ tournamentInfo }) => {
             </Box>
             <Button
                 variant="contained"
+                disableRipple
                 href={tournamentInfo.startGGUrl}
                 disableElevation
                 color="secondary"

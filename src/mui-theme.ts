@@ -21,9 +21,16 @@ export const theme = createTheme({
     palette: {
         primary: {
             main: "#117bbf",
+            light: "#4eb0ef"
         },
         secondary: {
             main: "#c74646",
+            dark: "#b43636",
+            light: "#fa393c"
+        },
+        background: {
+            default: "#dbdbdb",
+            paper: "#fff"
         },
         typography: {
             contrastFocused: "#fff",
@@ -32,17 +39,28 @@ export const theme = createTheme({
     },
     typography: {
         htmlFontSize: 8,
-        fontFamily: 'Fredoka',
+        fontFamily: 'Lato',
         h1: {
             fontSize: 72,
             fontWeight: 600,
+            fontFamily: 'Fredoka',
         },
         h2: {
             fontSize: 60,
-            fontWeight: 400
+            fontWeight: 400,
+            fontFamily: 'Fredoka',
         },
         h3: {
-            fontSize: 40
+            fontSize: 40,
+            fontFamily: 'Fredoka',
+        },
+        h4 : {
+            fontSize: 36,
+            fontWeight: 600,
+            fontFamily: 'Fredoka'
+        },
+        subtitle1: {
+            fontSize: 24
         }
     }
 })
