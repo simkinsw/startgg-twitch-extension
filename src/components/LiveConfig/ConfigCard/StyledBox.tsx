@@ -7,7 +7,7 @@ const StyledBox = styled(({ ...props }: BoxProps) => (
             bgcolor: "background.paper", 
             borderRadius: ".5rem",
             boxShadow: 5,
-            overflow: "hidden"
+            overflow: "hidden",
         }} 
     />
 ))();

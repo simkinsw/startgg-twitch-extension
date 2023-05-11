@@ -6,7 +6,7 @@ declare module "@mui/material/styles" {
         typography: {
             contrastFocused: React.CSSProperties['color'],
             contrastUnfocused: React.CSSProperties['color']
-        }
+        },
     }
 
     interface PaletteOptions {
@@ -61,6 +61,61 @@ export const theme = createTheme({
         },
         subtitle1: {
             fontSize: 24
+        }
+    }
+})
+
+export const darkTheme = createTheme({
+    palette: {
+        mode: "dark",
+        primary: {
+            main: "#117bbf",
+            light: "#4eb0ef"
+        },
+        secondary: {
+            main: "#c74646",
+            dark: "#b43636",
+            light: "#fa393c"
+        },
+        background: {
+            default: "#0e0e10",
+            paper: "#3a3a3a"
+        },
+        typography: {
+            contrastFocused: "#fff",
+            contrastUnfocused: "#dbdbdb"
+        }
+    },
+    typography: {
+        htmlFontSize: 8,
+        fontFamily: 'Lato',
+        allVariants: {
+            color: "#fff"
+        },
+        h1: {
+            fontSize: 72,
+            fontWeight: 600,
+            fontFamily: 'Fredoka',
+        },
+        h2: {
+            fontSize: 60,
+            fontWeight: 400,
+            fontFamily: 'Fredoka',
+        },
+        h3: {
+            fontSize: 40,
+            fontFamily: 'Fredoka',
+        },
+        h4 : {
+            fontSize: 36,
+            fontFamily: 'Fredoka'
+        },
+        h5: {
+            fontSize: 30,
+            fontFamily: "Fredoka"
+        },
+        subtitle1: {
+            fontSize: 20
         }
     }
 })

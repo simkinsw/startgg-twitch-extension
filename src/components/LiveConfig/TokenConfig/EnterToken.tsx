@@ -3,12 +3,12 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core";
 import { theme } from "../../../mui-theme";
 import { Startgg } from "../../../utils/startGG";
-import { setCookie } from "../../../utils/cookieUtils";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import StyledTooltip from "../StyledTooltip";
 import { useDispatch } from 'react-redux';
 import { setApiToken } from "../../../redux/store";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { setLocalStorageItem } from "../../../utils/localStorageUtils";
 
 const useStyles = makeStyles((theme) => ({
     form: {
@@ -41,10 +41,6 @@ const EnterToken = () => {
 
     const handleClickShowToken = () => setShowToken((show) => !show);
 
-    const handleMouseDownToken = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-    };
-
     const dispatch = useDispatch();
 
     const handleTokenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,7 +61,7 @@ const EnterToken = () => {
             } else {
                 dispatch(setApiToken(token)); //add to redux store
                 if (storeToken) {
-                    setCookie('startGGAPIToken', token, 30); // Set cookie with token that expires in 30 days
+                    setLocalStorageItem('startGGAPIToken', token);
                 }
             }
         } catch (error) {

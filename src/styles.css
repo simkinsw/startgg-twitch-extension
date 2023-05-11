@@ -2,10 +2,16 @@ html {
     font-size: 8px;
 }
 
+*::-webkit-scrollbar {
+    display: none;
+}
+
 *,
 *::after,
 *::before {
     margin: 0;
     padding: 0;
     box-sizing: inherit;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }

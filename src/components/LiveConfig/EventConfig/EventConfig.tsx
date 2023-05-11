@@ -83,7 +83,7 @@ const EventConfig: React.FC<EventConfigProps> = ({ event, token }) => {
                     </Typography>
                     :
                     <Typography color="secondary.light">
-                        You must set your start.gg API token above before you select an event.
+                        You must set your start.gg API token before selecting an event.
                     </Typography>
                 
             }

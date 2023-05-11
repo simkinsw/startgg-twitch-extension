@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import LiveConfig from "../../components/LiveConfig";
-import { theme as muiTheme } from "../../mui-theme";
+import { darkTheme } from "../../mui-theme";
 import { ThemeProvider } from "@mui/material";
 
 const LiveConfigPage = () => {
@@ -33,10 +33,8 @@ const LiveConfigPage = () => {
     }, [twitch]);
 
     return (
-        <ThemeProvider theme={muiTheme}>
-            <div style={{width: "80rem"}}>
-                <LiveConfig />
-            </div>
+        <ThemeProvider theme={darkTheme}>
+            <LiveConfig />
         </ThemeProvider>
     );
 };

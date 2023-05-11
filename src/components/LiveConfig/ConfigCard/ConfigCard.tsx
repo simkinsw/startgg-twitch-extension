@@ -18,24 +18,24 @@ const ConfigCard: React.FC<ConfigCardProps> = ({
     return (
         <StyledBox>
             <Box
-                padding={2}
                 sx={{
+                    padding: "1.5rem 2rem",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
                     bgcolor: completed ? "#17c618" : "#fa393c",
                 }}
             >
-                <Typography variant="h3" color="primary.contrastText">
+                <Typography variant="h5" color="primary.contrastText">
                     {heading}
                 </Typography>
                 {completed ? (
                     <CheckCircleOutlineIcon
-                        sx={{ color: "white", width: "6rem", height: "6rem" }}
+                        sx={{ color: "white", width: "4.8rem", height: "4.8rem" }}
                     />
                 ) : (
                     <HighlightOffIcon
-                        sx={{ color: "white", width: "6rem", height: "6rem" }}
+                        sx={{ color: "white", width: "4.8rem", height: "4.8rem" }}
                     />
                 )}
             </Box>
