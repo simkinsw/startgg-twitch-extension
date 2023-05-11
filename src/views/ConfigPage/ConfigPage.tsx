@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./ConfigPage.css";
-import { StartggToken } from "../../utils/Startgg/Startgg";
+import { StartggToken } from "../../components/LiveConfig/Startgg/Startgg";
 
 const ConfigPage = () => {
     const [theme, setTheme] = useState("light");

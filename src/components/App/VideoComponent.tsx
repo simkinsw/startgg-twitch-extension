@@ -1,9 +1,8 @@
-import TournamentBanner from "../TournamentBanner";
-import ResultsTimeline from "../ResultsTimeline";
-import { Box, ThemeProvider } from "@mui/material";
-import { TabPanel, StyledTab, StyledTabs } from "../Tabs";
+import TournamentBanner from "./TournamentBanner";
+import ResultsTimeline from "./ResultsTimeline";
+import { Box } from "@mui/material";
+import { TabPanel, StyledTab, StyledTabs } from "./Tabs";
 import { useState } from "react";
-import { theme } from "./mui-theme";
 import { FaGamepad } from "react-icons/fa";
 
 
@@ -23,7 +22,7 @@ const VideoComponent = () => {
     };
 
     return (
-        <ThemeProvider theme={theme} >
+        <>
             <Box sx={{ boxShadow: 5 }}>
                 <TournamentBanner tournamentInfo={tournamentInfo} />
                 <Box sx={{ bgcolor: "primary.main", paddingTop: "4rem" }}>
@@ -48,7 +47,7 @@ const VideoComponent = () => {
             <TabPanel value={value} index={2}>
                 Upcoming Placeholder
             </TabPanel>
-        </ThemeProvider>
+        </>
     );
 };
 

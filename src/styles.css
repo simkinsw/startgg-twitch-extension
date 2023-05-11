@@ -2,11 +2,8 @@ html {
     font-size: 8px;
 }
 
-/*TODO: remove when putting on twitch*/
-body {
-    width: 1024px;
-    border: 1px solid black;
-    aspect-ratio: 8 / 9;
+*::-webkit-scrollbar {
+    display: none;
 }
 
 *,
@@ -15,4 +12,6 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: inherit;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
