@@ -12,6 +12,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { setApiToken } from "../../../redux/store";
 import { clearLocalStorageItem } from "../../../utils/localStorageUtils";
+import { theme } from "../../../mui-theme";
 
 interface ResetTokenProps {
     token: string;
@@ -34,7 +35,7 @@ const ResetToken: React.FC<ResetTokenProps> = ({ token }) => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "flex-start",
-                gap: 3,
+                height: "24rem"
             }}
         >
             <Typography>
@@ -42,7 +43,7 @@ const ResetToken: React.FC<ResetTokenProps> = ({ token }) => {
                 <br />
                 Hit Reset to clear all cookies and enter a new token.
             </Typography>
-            <Box sx={{ display: "flex", width: "100%", gap: "1rem" }}>
+            <Box sx={{ display: "flex", width: "100%", gap: "1rem", marginTop: theme.spacing(3) }}>
                 <FormControl sx={{ width: "100%" }}>
                     <TextField
                         id="token"
@@ -52,6 +53,7 @@ const ResetToken: React.FC<ResetTokenProps> = ({ token }) => {
                         variant="standard"
                         InputProps={{
                             readOnly: true,
+                            style: { height: "5rem" },
                             endAdornment: (
                                 <InputAdornment position="end">
                                     <IconButton onClick={handleClickShowToken}>
