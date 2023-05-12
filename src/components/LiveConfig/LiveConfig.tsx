@@ -2,6 +2,7 @@ import { Box, Typography } from "@mui/material";
 import TokenConfig from "./TokenConfig";
 import ConfigCard from "./ConfigCard";
 import EventConfig from "./EventConfig";
+import SetStream from "./SetStream";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState, setApiToken } from "../../redux/store";
 import { useEffect } from "react";
@@ -53,6 +54,7 @@ const LiveConfig: React.FC = () => {
                 <ConfigCard heading="Select Event" completed={!!event}>
                     <EventConfig event={event} token={token!} />
                 </ConfigCard>
+                <SetStream event={event} token={token!}/>
             </Box>
         </Box>
     );
