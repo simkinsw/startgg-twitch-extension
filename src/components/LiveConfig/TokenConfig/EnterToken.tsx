@@ -1,38 +1,24 @@
-import { TextField, Button, FormControlLabel, Checkbox, Typography, Box, InputAdornment, IconButton } from "@mui/material";
+import {
+    TextField,
+    Button,
+    FormControlLabel,
+    Checkbox,
+    Typography,
+    Box,
+    InputAdornment,
+    IconButton,
+} from "@mui/material";
 import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core";
 import { theme } from "../../../mui-theme";
 import { Startgg } from "../../../utils/startGG";
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import StyledTooltip from "../StyledTooltip";
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 import { setApiToken } from "../../../redux/store";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { setLocalStorageItem } from "../../../utils/localStorageUtils";
 
-const useStyles = makeStyles((theme) => ({
-    form: {
-        display: "flex",
-        alignItems: "start",
-        gap: theme.spacing(1),
-        marginTop: theme.spacing(3),
-        marginBottom: theme.spacing(5),
-        height: "4.8rem"
-    },
-    input: {
-        marginBottom: theme.spacing(2),
-        flex: "1",
-        padding: theme.spacing(1)
-    },
-    button: {
-        height: "7rem",
-        width: "13rem"
-    },
-}));
-
-
 const EnterToken = () => {
-    const classes = useStyles(theme);
     const [token, setToken] = useState("");
     const [storeToken, setStoreToken] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -47,7 +33,9 @@ const EnterToken = () => {
         setToken(event.target.value);
     };
 
-    const handleStoreTokenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleStoreTokenChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
         setStoreToken(event.target.checked);
     };
 
@@ -61,7 +49,7 @@ const EnterToken = () => {
             } else {
                 dispatch(setApiToken(token)); //add to redux store
                 if (storeToken) {
-                    setLocalStorageItem('startGGAPIToken', token);
+                    setLocalStorageItem("startGGAPIToken", token);
                 }
             }
         } catch (error) {
@@ -71,18 +59,36 @@ const EnterToken = () => {
     };
 
     return (
-        <>
+        <Box sx={{ height: "24rem", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <Typography>
-                You need a start.gg API token to use %AppName%. 
-                <br/>
-                You can generate one <a target="_blank" rel="noreferrer" href="https://start.gg/admin/profile/developer">here</a>.
+                You need a start.gg API token to use %AppName%.
+                <br />
+                You can generate one{" "}
+                <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://start.gg/admin/profile/developer"
+                >
+                    here
+                </a>
+                .
             </Typography>
-            <form className={classes.form} onSubmit={handleSubmit}>
+            <form
+                style={{
+                    display: "flex",
+                    alignItems: "start",
+                    gap: theme.spacing(1),
+                    marginTop: theme.spacing(3),
+                    marginBottom: theme.spacing(5),
+                    height: "4.8rem",
+                }}
+                onSubmit={handleSubmit}
+            >
                 <TextField
                     id="token-input"
                     label="Token"
                     variant="outlined"
-                    className={classes.input}
+                    sx={{ flex: "1" }}
                     value={token}
                     onChange={handleTokenChange}
                     error={!!error}
@@ -90,11 +96,15 @@ const EnterToken = () => {
                     type={showToken ? "text" : "password"}
                     InputProps={{
                         endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton onClick={handleClickShowToken}>
-                              {showToken ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          </InputAdornment>
+                            <InputAdornment position="end">
+                                <IconButton onClick={handleClickShowToken}>
+                                    {showToken ? (
+                                        <VisibilityOff />
+                                    ) : (
+                                        <Visibility />
+                                    )}
+                                </IconButton>
+                            </InputAdornment>
                         ),
                     }}
                 />
@@ -102,13 +112,16 @@ const EnterToken = () => {
                     variant="contained"
                     color="primary"
                     type="submit"
-                    className={classes.button}
+                    sx={{
+                        height: "7rem",
+                        width: "13rem",
+                    }}
                     disabled={!token || loading}
                 >
                     {loading ? "Validating..." : "Validate"}
                 </Button>
             </form>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -119,13 +132,17 @@ const EnterToken = () => {
                     }
                     label="Remember Me"
                 />
-                <StyledTooltip 
-                    title="We'll store your token as a cookie so you don't have to enter it next time"
-                >
-                    <HelpOutlineIcon sx={{ color: "gray", width: "2.4rem", transform: "translate(-1rem, .1rem)" }} />
+                <StyledTooltip title="We'll store your token as a cookie so you don't have to enter it next time">
+                    <HelpOutlineIcon
+                        sx={{
+                            color: "gray",
+                            width: "2.4rem",
+                            transform: "translate(-1rem, .1rem)",
+                        }}
+                    />
                 </StyledTooltip>
             </Box>
-        </>
+        </Box>
     );
 };
 
