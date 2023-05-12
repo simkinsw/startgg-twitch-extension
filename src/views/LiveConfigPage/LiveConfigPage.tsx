@@ -1,3 +1,7 @@
+// TODO: get/set initial data
+// TODO: get/set updates
+// TODO: publish updates
+// TODO: use updatedAfter: Timestamp filter for updates 
 import { useEffect, useState } from "react";
 import LiveConfig from "../../components/LiveConfig";
 import { darkTheme } from "../../mui-theme";
