@@ -12,7 +12,7 @@ interface ApiResponse {
 export class Startgg {
     static api = "https://api.start.gg/gql/alpha";
 
-    public static async query(apiToken: string, query: Query): Promise<ApiResponse> {
+    public static async query<T>(apiToken: string, query: Query): Promise<T> {
         const response = await fetch(this.api, {
             method: 'POST',
             headers: {

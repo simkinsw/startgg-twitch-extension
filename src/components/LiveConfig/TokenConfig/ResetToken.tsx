@@ -10,9 +10,9 @@ import {
 import React, { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
-import { setApiToken } from "../../../redux/store";
 import { clearLocalStorageItem } from "../../../utils/localStorageUtils";
 import { theme } from "../../../mui-theme";
+import { setApiToken } from "../../../redux/app";
 
 interface ResetTokenProps {
     token: string;

@@ -14,9 +14,9 @@ import { Startgg } from "../../../utils/startGG";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import StyledTooltip from "../StyledTooltip";
 import { useDispatch } from "react-redux";
-import { setApiToken } from "../../../redux/store";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { setLocalStorageItem } from "../../../utils/localStorageUtils";
+import { setApiToken } from "../../../redux/app";
 
 const EnterToken = () => {
     const [token, setToken] = useState("");
