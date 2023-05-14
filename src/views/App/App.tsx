@@ -1,19 +1,42 @@
-import { useEffect, useState } from "react";
-import VideoComponent from "../../components/App/VideoComponent";
+import Buffer from "buffer";
+import Pako from "pako";
 import { ThemeProvider } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+
+import VideoComponent from "../../components/App/VideoComponent";
 import { theme as muiTheme } from "../../mui-theme";
+import { Sets, setCompletedSets } from "../../redux/data";
+
 
 const App = () => {
     const [theme, setTheme] = useState("light");
     const [isVisible, setIsVisible] = useState(true);
     const twitch = window.Twitch?.ext;
 
+    const dispatch = useDispatch();
+
     useEffect(() => {
+        const localStorageEventHandler = (event: StorageEvent) => {
+            if (event.storageArea === localStorage && event.key === "message" && event.newValue) {
+                const unzipped: Sets = JSON.parse(Pako.inflate(Buffer.Buffer.from(event.newValue, 'base64'), { to: 'string'}));
+                dispatch(setCompletedSets(unzipped));
+            }
+        }
+
         if (twitch) {
+            // Get initial configuration from  config service
+            twitch.configuration.onChanged(function() {
+                if (twitch.configuration.broadcaster) {
+                    const unzipped: Sets = JSON.parse(Pako.inflate(Buffer.Buffer.from(twitch.configuration.broadcaster.content, 'base64'), { to: 'string'}));
+                    dispatch(setCompletedSets(unzipped));
+                }
+            });
+
+            // Get updates from pubsub
             twitch.listen("broadcast", (target, contentType, body) => {
-                console.log(
-                    `New PubSub message!\n${target}\n${contentType}\n${body}`
-                );
+                const unzipped: Sets = JSON.parse(Pako.inflate(Buffer.Buffer.from(body, 'base64'), { to: 'string'}));
+                dispatch(setCompletedSets(unzipped));
             });
 
             twitch.onVisibilityChanged((isVisible, _c) => {
@@ -26,13 +49,20 @@ const App = () => {
                     setTheme(context.theme ?? "light");
                 }
             });
+        }
 
-            twitch.configuration.onChanged(function(){
-                if(twitch.configuration.broadcaster){
-                    console.log('Initial configuration');
-                    console.log(twitch.configuration.broadcaster.content);
-                }
-            });
+        if (process.env.NODE_ENV === "development") {
+            // Get initial config from localStorage
+            const initialState = localStorage.getItem('store');
+            if (initialState) {
+                const unzipped: Sets = JSON.parse(Pako.inflate(Buffer.Buffer.from(initialState, 'base64'), { to: 'string'}));
+                dispatch(setCompletedSets(unzipped));
+            } else {
+                dispatch(setCompletedSets({}));
+            }
+
+            // Get updates from localStorage events
+            window.addEventListener('storage', localStorageEventHandler);
         }
 
         return () => {
@@ -40,6 +70,9 @@ const App = () => {
                 twitch.unlisten("broadcast", () =>
                     console.log("successfully unlistened")
                 );
+            }
+            if (process.env.NODE_ENV === "development") {
+                window.removeEventListener('storage', localStorageEventHandler);
             }
         };
     }, [twitch]);
