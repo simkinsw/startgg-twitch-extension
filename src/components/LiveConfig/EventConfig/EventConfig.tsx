@@ -3,8 +3,8 @@ import { theme } from "../../../mui-theme";
 import { useState } from "react";
 import { Startgg } from "../../../utils/startGG";
 import { StartGGEvent } from "../../../types/StartGGEvent";
-import { setEvent } from "../../../redux/store";
 import { useDispatch } from "react-redux";
+import { setEvent } from "../../../redux/app";
 
 interface EventConfigProps {
     event: StartGGEvent | null;

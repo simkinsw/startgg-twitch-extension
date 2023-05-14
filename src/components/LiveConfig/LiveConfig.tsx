@@ -2,20 +2,20 @@ import { Box, Typography } from "@mui/material";
 import TokenConfig from "./TokenConfig";
 import ConfigCard from "./ConfigCard";
 import EventConfig from "./EventConfig";
-import SetStream from "./SetStream";
 import { useDispatch, useSelector } from "react-redux";
-import { AppState, setApiToken } from "../../redux/store";
 import { useEffect } from "react";
 import { getLocalStorageItem } from "../../utils/localStorageUtils";
+import { RootState } from "../../redux/store";
+import { setApiToken } from "../../redux/app";
 
 const LiveConfig: React.FC = () => {
     const dispatch = useDispatch();
 
     const localStorageToken = getLocalStorageItem("startGGAPIToken");
-    const reduxToken = useSelector((state: AppState) => state.apiToken);
+    const reduxToken = useSelector((state: RootState) => state.app.apiToken);
 
     const token = !!reduxToken ? reduxToken : localStorageToken;
-    const event = useSelector((state: AppState) => state.event);
+    const event = useSelector((state: RootState) => state.app.event);
 
     useEffect(() => {
         if (localStorageToken && !reduxToken) {
@@ -54,7 +54,6 @@ const LiveConfig: React.FC = () => {
                 <ConfigCard heading="Select Event" completed={!!event}>
                     <EventConfig event={event} token={token!} />
                 </ConfigCard>
-                <SetStream event={event} token={token!}/>
             </Box>
         </Box>
     );

@@ -1,31 +1,15 @@
-import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { StartGGEvent } from "../types/StartGGEvent";
+import { configureStore } from "@reduxjs/toolkit";
+import { appReducer, AppState } from "./app";
+import { dataReducer, DataState } from "./data";
 
-export interface AppState {
-    apiToken: string;
-    event: StartGGEvent | null;
+export interface RootState {
+    app: AppState,
+    data: DataState,
 }
 
-const initialState: AppState = {
-    apiToken: "",
-    event: null,
-};
-
-const appSlice = createSlice({
-    name: "app",
-    initialState,
-    reducers: {
-        setApiToken(state, action: PayloadAction<string>) {
-            state.apiToken = action.payload;
-        },
-        setEvent(state, action: PayloadAction<StartGGEvent | null>) {
-            state.event = action.payload;
-        },
-    },
-});
-
-export const { setApiToken, setEvent } = appSlice.actions;
-
 export const store = configureStore({
-    reducer: appSlice.reducer,
+    reducer: {
+        app: appReducer,
+        data: dataReducer,
+    }
 });
