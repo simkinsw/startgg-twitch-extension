@@ -8,6 +8,9 @@ export type SetData = {
     loserName: string,
     loserSeed: number,
     loserGames: number,
+    roundName: string,
+    phaseName: string,
+    url: string,
 };
 
 export type Sets = {[key: number]: SetData};
