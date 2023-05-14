@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-import LiveConfig from "../../components/LiveConfig";
-import { darkTheme } from "../../mui-theme";
+import Buffer from "buffer";
+import Pako from "pako";
 import { Box, ThemeProvider, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+
+import LiveConfig from "../../components/LiveConfig";
+import { darkTheme } from "../../mui-theme";
 import { Startgg } from "../../utils/startGG";
 import { SetData, Sets, setCompletedSets } from "../../redux/data";
-
-import pako from 'pako';
-import buffer from 'buffer';
-import { RootState } from "../../redux/store";
+import { RootState, store } from "../../redux/store";
 
 interface Query {
     query: string;
@@ -83,24 +83,34 @@ const LiveConfigPage = () => {
 
     useEffect(() => {
         const updateReduxStore = (results: Sets) => {
-            // this should append
             dispatch(setCompletedSets(results));
         }
 
+        // Ignore "results" input, we are going to take directly from the already updated state
         const updateConfigStore = (results: Sets) => {
+            // Get "interesting" sets
+            const trimmedSets = Object.fromEntries(Object.entries(store.getState().data.completedSets).slice(0, 2));
+            const zipped = Buffer.Buffer.from(Pako.gzip(JSON.stringify(trimmedSets)).buffer).toString('base64');
             if (twitch) {
-                //const unzipped = JSON.parse(pako.inflate(buffer.Buffer.from(zipped, 'base64'), { to: 'string'}));
-                const zipped = buffer.Buffer.from(pako.gzip(JSON.stringify(results)).buffer).toString('base64');
-                // This should be (state + new) filtered for top 150 "interesting" (maybe just latest)
                 twitch.configuration.set("broadcaster", "1", zipped);
+            }
+            if (process.env.NODE_ENV === "development") {
+                // Use localStorage as a message bus
+                localStorage.setItem("store", zipped);
             }
         }
 
         const updatePubSub = (results: Sets) => {
+            const zipped = Buffer.Buffer.from(Pako.gzip(JSON.stringify(results)).buffer).toString('base64');
             if (twitch) {
-                const zipped = buffer.Buffer.from(pako.gzip(JSON.stringify(results)).buffer).toString('base64');
-                // this should be only new
                 twitch.send("broadcast", "text/plain", zipped);
+            }
+
+            if (process.env.NODE_ENV === "development") {
+                // Use localStorage as a message bus
+                // Force it to reprocess every time
+                localStorage.removeItem("message");
+                localStorage.setItem("message", zipped);
             }
         }
 
@@ -142,9 +152,9 @@ const LiveConfigPage = () => {
         let intervalId: ReturnType<typeof setInterval>;
         if(!!token) {
             refreshData();
-            //intervalId = setInterval(() => {
-            //    refreshData();
-            //}, 30000);
+            intervalId = setInterval(() => {
+                refreshData();
+            }, 30000);
         }
         return () => {
             if (intervalId) {

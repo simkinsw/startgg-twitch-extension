@@ -24,8 +24,12 @@ const dataSlice = createSlice({
     name: "data",
     initialState: initialData,
     reducers: {
+        // This merges updates into the store
         setCompletedSets(state, action: PayloadAction<Sets>) {
-            state.completedSets = action.payload;
+            state.completedSets = {
+                ...state.completedSets,
+                ...action.payload,
+            }
         },
     },
 });
