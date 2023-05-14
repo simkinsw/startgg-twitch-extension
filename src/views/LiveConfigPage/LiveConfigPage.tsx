@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import LiveConfig from "../../components/LiveConfig";
 import { darkTheme } from "../../mui-theme";
 import { Startgg } from "../../utils/startGG";
-import { SetData, Sets, setCompletedSets } from "../../redux/data";
+import { SetData, Sets, setSets } from "../../redux/data";
 import { RootState, store } from "../../redux/store";
 
 interface Query {
@@ -78,7 +78,7 @@ const LiveConfigPage = () => {
 
     const event = useSelector((state: RootState) => state.app.event);
     const token = useSelector((state: RootState) => state.app.apiToken);
-    const completedSets = useSelector((state: RootState) => state.data.completedSets);
+    const sets = useSelector((state: RootState) => state.data.sets);
 
     useEffect(() => {
         if (twitch) {
@@ -91,14 +91,14 @@ const LiveConfigPage = () => {
     }, [twitch]);
 
     useEffect(() => {
-        const updateReduxStore = (results: Sets) => {
-            dispatch(setCompletedSets(results));
+        const updateReduxStore = (time: number, results: Sets) => {
+            dispatch(setSets({ lastUpdate: time, sets: results}));
         }
 
         // Ignore "results" input, we are going to take directly from the already updated state
         const updateConfigStore = (results: Sets) => {
             // Get "interesting" sets
-            const trimmedSets = Object.fromEntries(Object.entries(store.getState().data.completedSets).slice(0, 2));
+            const trimmedSets = Object.fromEntries(Object.entries(store.getState().data.sets).slice(0, 2));
             const zipped = Buffer.Buffer.from(Pako.gzip(JSON.stringify(trimmedSets)).buffer).toString('base64');
             if (twitch) {
                 twitch.configuration.set("broadcaster", "1", zipped);
@@ -131,13 +131,14 @@ const LiveConfigPage = () => {
 
             const input = (page: number): Query => { 
                 return {
-                    "query": `query Query($eId: ID) { event(id: $eId) { id name sets(page: ${page}, perPage: 25, sortType: CALL_ORDER, filters: {state: [3]}) { pageInfo { total totalPages page perPage sortBy filter } nodes { id fullRoundText state slots { entrant { initialSeedNum name } standing { stats { score { value } } } } phaseGroup { phase { name } bracketUrl } } } } } `,
+                    "query": `query Query($eId: ID) { event(id: $eId) { id name sets(page: ${page}, perPage: 25, sortType: CALL_ORDER) { pageInfo { total totalPages page perPage sortBy filter } nodes { id fullRoundText state slots { entrant { initialSeedNum name } standing { stats { score { value } } } } phaseGroup { phase { name } bracketUrl } } } } } `,
                     "variables": {
                         "eId": event.id,
                     }
                 }
             };
             try {
+                const time = new Date().getTime();
                 var page = 1;
                 var pages = 0;
                 var results: Sets = {}
@@ -149,8 +150,8 @@ const LiveConfigPage = () => {
                         results[set.id] = convertSet(set);
                     })
                     page += 1;
-                } while (page <= 4 && page <= pages);
-                updateReduxStore(results);
+                } while (page <= pages);
+                updateReduxStore(time, results);
                 updateConfigStore(results);
                 updatePubSub(results);
             } catch (error) {
@@ -177,10 +178,10 @@ const LiveConfigPage = () => {
             <LiveConfig />
 
             <Box sx={{ minHeight: "21rem", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                {event && token && completedSets ? (
+                {event && token && sets ? (
                     <Typography color="primary.light">
                         Doing stuff:
-                        {JSON.stringify(completedSets, null, 2)}
+                        {JSON.stringify(sets, null, 2)}
                     </Typography>
                 ) : (
                     <Typography color="primary.light">

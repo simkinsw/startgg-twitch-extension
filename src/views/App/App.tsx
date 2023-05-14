@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 import VideoComponent from "../../components/App/VideoComponent";
 import { theme as muiTheme } from "../../mui-theme";
-import { Sets, setCompletedSets } from "../../redux/data";
+import { Sets, setSets } from "../../redux/data";
 
 
 const App = () => {
@@ -20,7 +20,7 @@ const App = () => {
         const localStorageEventHandler = (event: StorageEvent) => {
             if (event.storageArea === localStorage && event.key === "message" && event.newValue) {
                 const unzipped: Sets = JSON.parse(Pako.inflate(Buffer.Buffer.from(event.newValue, 'base64'), { to: 'string'}));
-                dispatch(setCompletedSets(unzipped));
+                dispatch(setSets({ lastUpdate: -1, sets: unzipped}));
             }
         }
 
@@ -29,14 +29,14 @@ const App = () => {
             twitch.configuration.onChanged(function() {
                 if (twitch.configuration.broadcaster) {
                     const unzipped: Sets = JSON.parse(Pako.inflate(Buffer.Buffer.from(twitch.configuration.broadcaster.content, 'base64'), { to: 'string'}));
-                    dispatch(setCompletedSets(unzipped));
+                    dispatch(setSets({ lastUpdate: -1, sets: unzipped}));
                 }
             });
 
             // Get updates from pubsub
             twitch.listen("broadcast", (target, contentType, body) => {
                 const unzipped: Sets = JSON.parse(Pako.inflate(Buffer.Buffer.from(body, 'base64'), { to: 'string'}));
-                dispatch(setCompletedSets(unzipped));
+                dispatch(setSets({ lastUpdate: -1, sets: unzipped}));
             });
 
             twitch.onVisibilityChanged((isVisible, _c) => {
@@ -56,9 +56,9 @@ const App = () => {
             const initialState = localStorage.getItem('store');
             if (initialState) {
                 const unzipped: Sets = JSON.parse(Pako.inflate(Buffer.Buffer.from(initialState, 'base64'), { to: 'string'}));
-                dispatch(setCompletedSets(unzipped));
+                dispatch(setSets({ lastUpdate: -1, sets: unzipped}));
             } else {
-                dispatch(setCompletedSets({}));
+                dispatch(setSets({lastUpdate: -1, sets: {}}));
             }
 
             // Get updates from localStorage events

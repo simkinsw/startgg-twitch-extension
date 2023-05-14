@@ -16,11 +16,13 @@ export type SetData = {
 export type Sets = {[key: number]: SetData};
 
 export interface DataState {
-    completedSets: Sets;
+    lastUpdate: number,
+    sets: Sets,
 };
 
 const initialData: DataState = {
-    completedSets: {},
+    lastUpdate: 0,
+    sets: {},
 };
 
 const dataSlice = createSlice({
@@ -28,14 +30,15 @@ const dataSlice = createSlice({
     initialState: initialData,
     reducers: {
         // This merges updates into the store
-        setCompletedSets(state, action: PayloadAction<Sets>) {
-            state.completedSets = {
-                ...state.completedSets,
-                ...action.payload,
+        setSets(state, action: PayloadAction<DataState>) {
+            state.lastUpdate = action.payload.lastUpdate,
+            state.sets = {
+                ...state.sets,
+                ...action.payload.sets,
             }
         },
     },
 });
 
-export const { setCompletedSets } = dataSlice.actions;
+export const { setSets } = dataSlice.actions;
 export const dataReducer = dataSlice.reducer;
