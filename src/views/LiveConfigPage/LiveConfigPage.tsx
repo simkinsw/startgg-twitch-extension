@@ -83,23 +83,25 @@ const LiveConfigPage = () => {
 
     useEffect(() => {
         const updateReduxStore = (results: Sets) => {
-            // this should append
             dispatch(setCompletedSets(results));
         }
 
+        // Ignore "results" input, we are going to take directly from the already updated state
         const updateConfigStore = (results: Sets) => {
             if (twitch) {
-                //const unzipped = JSON.parse(pako.inflate(buffer.Buffer.from(zipped, 'base64'), { to: 'string'}));
-                const zipped = buffer.Buffer.from(pako.gzip(JSON.stringify(results)).buffer).toString('base64');
-                // This should be (state + new) filtered for top 150 "interesting" (maybe just latest)
+                // Get "interesting" sets
+                const trimmedSets = Object.fromEntries(Object.entries(completedSets).slice(0, 100));
+                const zipped = buffer.Buffer.from(pako.gzip(JSON.stringify(trimmedSets)).buffer).toString('base64');
                 twitch.configuration.set("broadcaster", "1", zipped);
+
+                // User side
+                //const unzipped = JSON.parse(pako.inflate(buffer.Buffer.from(zipped, 'base64'), { to: 'string'}));
             }
         }
 
         const updatePubSub = (results: Sets) => {
             if (twitch) {
                 const zipped = buffer.Buffer.from(pako.gzip(JSON.stringify(results)).buffer).toString('base64');
-                // this should be only new
                 twitch.send("broadcast", "text/plain", zipped);
             }
         }
@@ -142,9 +144,9 @@ const LiveConfigPage = () => {
         let intervalId: ReturnType<typeof setInterval>;
         if(!!token) {
             refreshData();
-            //intervalId = setInterval(() => {
-            //    refreshData();
-            //}, 30000);
+            intervalId = setInterval(() => {
+                refreshData();
+            }, 30000);
         }
         return () => {
             if (intervalId) {
