@@ -16,9 +16,23 @@ interface Query {
     variables: object;
 }
 
+interface SetResponse {
+    data: {
+        event: {
+            id: number,
+            sets: {
+                pageInfo: {
+                    totalPages: number,
+                }
+                nodes: [Set]
+            }
+        }
+    }
+}
 
 interface Set {
     id: number,
+    fullRoundText: string,
     state: number,
     slots: [
         {
@@ -35,6 +49,12 @@ interface Set {
             }
         }
     ]
+    phaseGroup: {
+        phase: {
+            name: string,
+        }
+        bracketUrl: string,
+    }
 }
 
 const convertSet = (set: Set): SetData => { 
@@ -45,20 +65,9 @@ const convertSet = (set: Set): SetData => {
         loserName: set.slots[1].entrant.name,
         loserSeed: set.slots[1].entrant.initialSeedNum,
         loserGames: set.slots[1].standing.stats.score.value, 
-    }
-}
-
-interface SetResponse {
-    data: {
-        event: {
-            id: number,
-            sets: {
-                pageInfo: {
-                    totalPages: number,
-                }
-                nodes: [Set]
-            }
-        }
+        roundName: set.fullRoundText,
+        phaseName: set.phaseGroup.phase.name,
+        url: set.phaseGroup.bracketUrl,
     }
 }
 
@@ -123,7 +132,7 @@ const LiveConfigPage = () => {
 
             const input = (page: number): Query => { 
                 return {
-                    "query": `query Query($eId: ID) { event(id: $eId) { id name sets(page: ${page}, perPage: 50, sortType: CALL_ORDER, filters: {state: [3]}) { pageInfo { total totalPages page perPage sortBy filter } nodes { id state slots { entrant { initialSeedNum name } standing { stats { score { value } } } } } } } } `,
+                    "query": `query Query($eId: ID) { event(id: $eId) { id name sets(page: ${page}, perPage: 25, sortType: CALL_ORDER, filters: {state: [3]}) { pageInfo { total totalPages page perPage sortBy filter } nodes { id fullRoundText state slots { entrant { initialSeedNum name } standing { stats { score { value } } } } phaseGroup { phase { name } bracketUrl } } } } } `,
                     "variables": {
                         "eId": event.id,
                     }
