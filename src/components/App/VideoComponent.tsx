@@ -22,7 +22,7 @@ const VideoComponent = () => {
     };
 
     return (
-        <>
+        <Box sx={{ width: "100%", height: "100%", bgcolor: "background.default" }}>
             <Box sx={{ boxShadow: 5 }}>
                 <TournamentBanner tournamentInfo={tournamentInfo} />
                 <Box sx={{ bgcolor: "primary.main", paddingTop: "4rem" }}>
@@ -38,7 +38,6 @@ const VideoComponent = () => {
                 </Box>
             </Box>
             <TabPanel value={value} index={0}>
-                Results Placeholder
                 <ResultsTimeline />
             </TabPanel>
             <TabPanel value={value} index={1}>
@@ -47,7 +46,7 @@ const VideoComponent = () => {
             <TabPanel value={value} index={2}>
                 Upcoming Placeholder
             </TabPanel>
-        </>
+        </Box>
     );
 };
 

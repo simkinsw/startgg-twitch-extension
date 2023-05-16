@@ -10,6 +10,7 @@ import { Startgg } from "../../utils/startGG";
 import { SetData, Sets, setCompletedSets } from "../../redux/data";
 import { RootState, store } from "../../redux/store";
 
+//TODO: move this to ./types
 interface Query {
     query: string;
     variables: object;

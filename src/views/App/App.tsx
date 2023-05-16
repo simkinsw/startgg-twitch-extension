@@ -79,7 +79,9 @@ const App = () => {
 
     return isVisible ? (
         <ThemeProvider theme={muiTheme}>
-            <VideoComponent />
+            <div style={{ maxWidth: "1024px", aspectRatio: "8/9" }}>
+                <VideoComponent />
+            </div>
         </ThemeProvider>
     ) : (
         <div className="App">
