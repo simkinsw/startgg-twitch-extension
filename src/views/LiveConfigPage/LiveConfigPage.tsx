@@ -7,8 +7,9 @@ import { useEffect, useState } from "react";
 import LiveConfig from "../../components/LiveConfig";
 import { darkTheme } from "../../mui-theme";
 import { Startgg } from "../../utils/startGG";
-import { SetData, Sets, setCompletedSets } from "../../redux/data";
+import { SetData, Sets, setSets } from "../../redux/data";
 import { RootState, store } from "../../redux/store";
+import { setLastUpdate } from "../../redux/app";
 
 interface Query {
     query: string;
@@ -31,6 +32,7 @@ interface SetResponse {
 
 interface Set {
     id: number,
+    startedAt: number,
     fullRoundText: string,
     state: number,
     slots: [
@@ -51,22 +53,34 @@ interface Set {
     phaseGroup: {
         phase: {
             name: string,
+            phaseOrder: number,
         }
         bracketUrl: string,
     }
 }
 
 const convertSet = (set: Set): SetData => { 
+    var winner = 0;
+    var loser = 1;
+    if (set.slots[0].standing.stats.score.value < set.slots[1].standing.stats.score.value) {
+        winner = 1;
+        loser = 0;
+    }
+    
+    // TODO: Handle byes
+
     return {
-        winnerName:  set.slots[0].entrant.name,
-        winnerSeed:  set.slots[0].entrant.initialSeedNum,
-        winnerGames: set.slots[0].standing.stats.score.value,
-        loserName: set.slots[1].entrant.name,
-        loserSeed: set.slots[1].entrant.initialSeedNum,
-        loserGames: set.slots[1].standing.stats.score.value, 
+        winnerName:  set.slots[winner].entrant.name,
+        winnerSeed:  set.slots[winner].entrant.initialSeedNum,
+        winnerGames: set.slots[winner].standing.stats.score.value,
+        loserName: set.slots[loser].entrant.name,
+        loserSeed: set.slots[loser].entrant.initialSeedNum,
+        loserGames: set.slots[loser].standing.stats.score.value, 
         roundName: set.fullRoundText,
         phaseName: set.phaseGroup.phase.name,
         url: set.phaseGroup.bracketUrl,
+        // Somewhat hacky but cheap ordering
+        order: set.phaseGroup.phase.phaseOrder * set.startedAt,
     }
 }
 
@@ -78,7 +92,7 @@ const LiveConfigPage = () => {
 
     const event = useSelector((state: RootState) => state.app.event);
     const token = useSelector((state: RootState) => state.app.apiToken);
-    const completedSets = useSelector((state: RootState) => state.data.completedSets);
+    const sets = useSelector((state: RootState) => state.data.sets);
 
     useEffect(() => {
         if (twitch) {
@@ -91,15 +105,18 @@ const LiveConfigPage = () => {
     }, [twitch]);
 
     useEffect(() => {
-        const updateReduxStore = (results: Sets) => {
-            dispatch(setCompletedSets(results));
+        const updateReduxStore = (time: number, results: Sets) => {
+            dispatch(setLastUpdate(time));
+            dispatch(setSets(results));
         }
 
-        // Ignore "results" input, we are going to take directly from the already updated state
-        const updateConfigStore = (results: Sets) => {
-            // Get "interesting" sets
-            const trimmedSets = Object.fromEntries(Object.entries(store.getState().data.completedSets).slice(0, 2));
-            const zipped = Buffer.Buffer.from(Pako.gzip(JSON.stringify(trimmedSets)).buffer).toString('base64');
+        const updateConfigStore = () => {
+            const config =  { ...store.getState().data };
+
+            // Grab the top 100 sets based on the "order" field, populated at query time
+            config.sets = Object.fromEntries(Object.entries(config.sets).sort((a, b) => b[1].order - a[1].order).slice(0,100));
+
+            const zipped = Buffer.Buffer.from(Pako.gzip(JSON.stringify(config)).buffer).toString('base64');
             if (twitch) {
                 twitch.configuration.set("broadcaster", "1", zipped);
             }
@@ -129,29 +146,34 @@ const LiveConfigPage = () => {
                 return;
             }
 
-            const input = (page: number): Query => { 
+            const input = (page: number, lastUpdate: number): Query => { 
                 return {
-                    "query": `query Query($eId: ID) { event(id: $eId) { id name sets(page: ${page}, perPage: 25, sortType: CALL_ORDER, filters: {state: [3]}) { pageInfo { total totalPages page perPage sortBy filter } nodes { id fullRoundText state slots { entrant { initialSeedNum name } standing { stats { score { value } } } } phaseGroup { phase { name } bracketUrl } } } } } `,
+                    "query": `query Query($eId: ID) { event(id: $eId) { id name sets(page: ${page}, perPage: 25, filters: { state: [3], updatedAfter: ${lastUpdate} }) { pageInfo { total totalPages page perPage sortBy filter } nodes { id startedAt fullRoundText state slots { entrant { initialSeedNum name } standing { stats { score { value } } } } phaseGroup { phase { name phaseOrder } bracketUrl } } } } } `,
                     "variables": {
                         "eId": event.id,
                     }
                 }
             };
             try {
+                const time = new Date().getTime();
                 var page = 1;
                 var pages = 0;
                 var results: Sets = {}
                 do {
                     console.log(`Getting ${page}/${pages}`);
-                    const response: SetResponse = await Startgg.query(token, input(page));
+                    const response: SetResponse = await Startgg.query(token, input(page, store.getState().app.lastUpdate));
                     pages = response.data.event.sets.pageInfo.totalPages;
                     response.data.event.sets.nodes.forEach((set) => {
                         results[set.id] = convertSet(set);
                     })
                     page += 1;
-                } while (page <= 4 && page <= pages);
-                updateReduxStore(results);
-                updateConfigStore(results);
+                } while (page <= pages);
+
+                // Update internal storage of sets
+                updateReduxStore(time, results);
+                // Update base data for new viewers
+                updateConfigStore();
+                // Publish new sets for existing viewers
                 updatePubSub(results);
             } catch (error) {
                 console.error(`Failed to refresh data: ${error}`);
@@ -177,10 +199,10 @@ const LiveConfigPage = () => {
             <LiveConfig />
 
             <Box sx={{ minHeight: "21rem", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                {event && token && completedSets ? (
+                {event && token && sets ? (
                     <Typography color="primary.light">
                         Doing stuff:
-                        {JSON.stringify(completedSets, null, 2)}
+                        {JSON.stringify(sets, null, 2)}
                     </Typography>
                 ) : (
                     <Typography color="primary.light">
