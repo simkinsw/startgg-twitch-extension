@@ -55,6 +55,7 @@ const ResultsTimeline = () => {
                     rowGap: "6rem",
                     maxHeight: "100%",
                     overflow: "auto",
+                    paddingBottom: "1rem"
                 }}
             >
                 {setData.map((set) => (
