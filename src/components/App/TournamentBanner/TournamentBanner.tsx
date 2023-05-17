@@ -1,24 +1,21 @@
-import { FC } from "react";
 import startGGButton from "../../../assets/startGGButton.png";
 import { Box, Button, Typography } from "@mui/material";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
 
-type TournamentBannerProps = {
-    tournamentInfo: {
-        tournamentName: string;
-        eventName: string;
-        imageUrl: string;
-        startGGUrl: string;
-    }
-};
+const TournamentBanner = () => {
+    const tournament = useSelector((state: RootState) => state.data.tournament);
+    const event = useSelector((state: RootState) => state.data.event);
+    const imageUrl = useSelector((state: RootState) => state.data.imageUrl);
+    const startggUrl = useSelector((state: RootState) => state.data.startggUrl);
 
-const TournamentBanner: FC<TournamentBannerProps> = ({ tournamentInfo }) => {
     return (
         <Box 
             bgcolor="primary.main"
             sx={{ display: 'flex', alignItems: 'center' }}
         >
             <img 
-                src={tournamentInfo.imageUrl} 
+                src={imageUrl}
                 alt="" 
                 style={{ 
                     width: "20rem", 
@@ -28,13 +25,13 @@ const TournamentBanner: FC<TournamentBannerProps> = ({ tournamentInfo }) => {
                 }}
             />
             <Box>
-                <Typography variant="h1" color="primary.contrastText">{tournamentInfo.tournamentName}</Typography>
-                <Typography variant="h2" color="primary.contrastText">{tournamentInfo.eventName}</Typography>
+                <Typography variant="h1" color="primary.contrastText">{tournament}</Typography>
+                <Typography variant="h2" color="primary.contrastText">{event}</Typography>
             </Box>
             <Button
                 variant="contained"
                 disableRipple
-                href={tournamentInfo.startGGUrl}
+                href={startggUrl}
                 disableElevation
                 color="secondary"
                 target="_blank"

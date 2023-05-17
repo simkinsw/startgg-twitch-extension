@@ -22,7 +22,7 @@ const VideoComponent = () => {
     };
 
     return (
-        <Box sx={{ width: "100%", minHeight: "100%", bgcolor: "background.default" }}>
+        <Box sx={{ width: "100%", height: "1152px", bgcolor: "background.default" }}>
             <Box bgcolor="primary.main" sx={{ boxShadow: 5, position: "fixed", width: "1024px", zIndex: 100  }}>
                 <TournamentBanner tournamentInfo={tournamentInfo} />
                 <Box sx={{ paddingTop: "4rem" }}>

@@ -6,10 +6,10 @@ const CustomToggleButton = styled(ToggleButton)(({ theme }) => ({
         fontSize: "4rem"
     },
     "&.Mui-selected": {
-        color: theme.palette.common.white, // Set white text when toggled
-        backgroundColor: theme.palette.primary.main, // Set primary color background when toggled
+        color: theme.palette.common.white,
+        backgroundColor: theme.palette.primary.main,
         "&:hover": {
-            backgroundColor: theme.palette.primary.dark, // Set darker primary color background on hover when toggled
+            backgroundColor: theme.palette.primary.dark,
         },
     },
 }));

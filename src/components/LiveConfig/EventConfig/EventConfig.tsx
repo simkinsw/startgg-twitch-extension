@@ -5,6 +5,7 @@ import { Startgg } from "../../../utils/startGG";
 import { StartGGEvent } from "../../../types/StartGGEvent";
 import { useDispatch } from "react-redux";
 import { setEvent } from "../../../redux/app";
+import { setStartGGEvent } from "../../../redux/data";
 
 interface EventConfigProps {
     event: StartGGEvent | null;
@@ -24,6 +25,7 @@ const EventConfig: React.FC<EventConfigProps> = ({ event, token }) => {
             const ggEvent = await Startgg.getEvent(token, url!);
             if (ggEvent) {
                 dispatch(setEvent(ggEvent));
+                dispatch(setStartGGEvent(ggEvent));
             } else {
                 setError("Invalid URL");
             }
