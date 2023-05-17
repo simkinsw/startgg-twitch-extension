@@ -22,10 +22,10 @@ const VideoComponent = () => {
     };
 
     return (
-        <Box sx={{ width: "100%", height: "100%", bgcolor: "background.default" }}>
-            <Box sx={{ boxShadow: 5 }}>
+        <Box sx={{ width: "100%", minHeight: "100%", bgcolor: "background.default" }}>
+            <Box bgcolor="primary.main" sx={{ boxShadow: 5, position: "fixed", width: "1024px", zIndex: 100  }}>
                 <TournamentBanner tournamentInfo={tournamentInfo} />
-                <Box sx={{ bgcolor: "primary.main", paddingTop: "4rem" }}>
+                <Box sx={{ paddingTop: "4rem" }}>
                     <StyledTabs
                         value={value}
                         onChange={handleChange}

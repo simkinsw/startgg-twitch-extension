@@ -58,6 +58,7 @@ interface Set {
 }
 
 const convertSet = (set: Set): SetData => { 
+
     return {
         winnerName:  set.slots[0].entrant.name,
         winnerSeed:  set.slots[0].entrant.initialSeedNum,
