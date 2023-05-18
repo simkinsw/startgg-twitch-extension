@@ -33,7 +33,7 @@ interface SetResponse {
 
 interface Set {
     id: number,
-    startedAt: number,
+    completedAt: number,
     fullRoundText: string,
     state: number,
     slots: [
@@ -81,7 +81,7 @@ const convertSet = (set: Set): SetData => {
         phaseName: set.phaseGroup.phase.name,
         url: set.phaseGroup.bracketUrl,
         // Somewhat hacky but cheap ordering
-        order: set.phaseGroup.phase.phaseOrder * set.startedAt,
+        order: set.phaseGroup.phase.phaseOrder * set.completedAt,
     }
 }
 
@@ -149,14 +149,15 @@ const LiveConfigPage = () => {
 
             const input = (page: number, lastUpdate: number): Query => { 
                 return {
-                    "query": `query Query($eId: ID) { event(id: $eId) { id name sets(page: ${page}, perPage: 25, filters: { state: [3], updatedAfter: ${lastUpdate} }) { pageInfo { total totalPages page perPage sortBy filter } nodes { id startedAt fullRoundText state slots { entrant { initialSeedNum name } standing { stats { score { value } } } } phaseGroup { phase { name phaseOrder } bracketUrl } } } } } `,
+                    "query": `query Query($eId: ID) { event(id: $eId) { id name sets(page: ${page}, perPage: 25, filters: { state: [3], updatedAfter: ${lastUpdate} }) { pageInfo { total totalPages page perPage sortBy filter } nodes { id completedAt fullRoundText state slots { entrant { initialSeedNum name } standing { stats { score { value } } } } phaseGroup { phase { name phaseOrder } bracketUrl } } } } } `,
                     "variables": {
                         "eId": event.id,
                     }
                 }
             };
             try {
-                const time = new Date().getTime();
+                // Add a 2 minute buffer to favor duplicates over missing data (completedAt vs updatedAfter is a little inconsistent)
+                const time = Math.floor(Date.now() / 1000) - 120;
                 var page = 1;
                 var pages = 0;
                 var results: Sets = {}
