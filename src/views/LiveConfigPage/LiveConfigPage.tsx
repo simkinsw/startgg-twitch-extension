@@ -156,7 +156,8 @@ const LiveConfigPage = () => {
                 }
             };
             try {
-                const time = Math.floor(Date.now() / 1000);
+                // Add a 2 minute buffer to favor duplicates over missing data (completedAt vs updatedAfter is a little inconsistent)
+                const time = Math.floor(Date.now() / 1000) - 120;
                 var page = 1;
                 var pages = 0;
                 var results: Sets = {}
