@@ -29,7 +29,7 @@ const App = () => {
             twitch.configuration.onChanged(function() {
                 if (twitch.configuration.broadcaster) {
                     const unzipped: DataState = JSON.parse(Pako.inflate(Buffer.Buffer.from(twitch.configuration.broadcaster.content, 'base64'), { to: 'string'}));
-                    dispatch(setStartGGEvent({id: -1, tournament: unzipped.tournament, name: unzipped.event}));
+                    dispatch(setStartGGEvent({id: -1, tournament: unzipped.tournament, name: unzipped.event, imageUrl: unzipped.imageUrl, startggUrl: unzipped.startggUrl }));
                     dispatch(setSets(unzipped.sets));
                 }
             });
@@ -57,7 +57,7 @@ const App = () => {
             const initialState = localStorage.getItem('store');
             if (initialState) {
                 const unzipped: DataState = JSON.parse(Pako.inflate(Buffer.Buffer.from(initialState, 'base64'), { to: 'string'}));
-                dispatch(setStartGGEvent({id: -1, tournament: unzipped.tournament, name: unzipped.event}));
+                dispatch(setStartGGEvent({id: -1, tournament: unzipped.tournament, name: unzipped.event, imageUrl: unzipped.imageUrl, startggUrl: unzipped.startggUrl }));
                 dispatch(setSets(unzipped.sets));
             }
 
@@ -75,11 +75,13 @@ const App = () => {
                 window.removeEventListener('storage', localStorageEventHandler);
             }
         };
-    }, [twitch]);
+    }, [twitch, dispatch]);
 
     return isVisible ? (
         <ThemeProvider theme={muiTheme}>
-            <VideoComponent />
+            <div style={{ maxWidth: "1024px", maxHeight: "1152px" }}>
+                <VideoComponent />
+            </div>
         </ThemeProvider>
     ) : (
         <div className="App">

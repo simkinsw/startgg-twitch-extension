@@ -59,6 +59,9 @@ export const theme = createTheme({
             fontWeight: 600,
             fontFamily: 'Fredoka'
         },
+        h5: {
+            fontSize: 32
+        },
         subtitle1: {
             fontSize: 24
         }

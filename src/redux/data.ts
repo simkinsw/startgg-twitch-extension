@@ -20,12 +20,16 @@ export type Sets = {[key: number]: SetData};
 export interface DataState {
     tournament: string,
     event: string,
+    imageUrl: string,
+    startggUrl: string,
     sets: Sets,
 };
 
 const initialData: DataState = {
     tournament: "",
     event: "",
+    imageUrl: "",
+    startggUrl: "",
     sets: {},
 };
 
@@ -43,6 +47,8 @@ const dataSlice = createSlice({
         setStartGGEvent(state, action: PayloadAction<StartGGEvent>) {
             state.tournament = action.payload.tournament;
             state.event = action.payload.name;
+            state.imageUrl = action.payload.imageUrl;
+            state.startggUrl = action.payload.startggUrl;
         },
     },
 });

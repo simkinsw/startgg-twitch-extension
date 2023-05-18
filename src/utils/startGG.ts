@@ -59,16 +59,19 @@ export class Startgg {
             const slug = url.slice(index);
 
             const input: Query = {
-                query: "query GetEventID($slug: String) { event(slug: $slug) { id, name, tournament { name } } }",
+                query: "query GetEventID($slug: String) { event(slug: $slug) { id, name, tournament { name, images { type, url } } } }",
                 variables: { slug }
             };
 
             const response = await this.query(apiToken, input) as any;
+            const imageUrl = response.data.event.tournament.images.find((image: any) => image.type === "profile").url
 
             return {
                 tournament: response.data.event.tournament.name,
                 name: response.data.event.name,
-                id: response.data.event.id
+                id: response.data.event.id,
+                imageUrl: imageUrl,
+                startggUrl: url
             } as StartGGEvent;
         } catch {
             return undefined;

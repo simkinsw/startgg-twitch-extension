@@ -11,6 +11,7 @@ import { SetData, Sets, setSets } from "../../redux/data";
 import { RootState, store } from "../../redux/store";
 import { setLastUpdate } from "../../redux/app";
 
+//TODO: move this to ./types
 interface Query {
     query: string;
     variables: object;
@@ -167,7 +168,7 @@ const LiveConfigPage = () => {
                         results[set.id] = convertSet(set);
                     })
                     page += 1;
-                } while (page <= pages);
+                } while (page <= pages && page < 20); //TODO is this right?
 
                 // Update internal storage of sets
                 updateReduxStore(time, results);
