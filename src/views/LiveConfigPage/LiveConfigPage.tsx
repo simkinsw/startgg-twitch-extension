@@ -68,7 +68,6 @@ const convertSet = (set: Set): SetData => {
         loser = 0;
     }
     
-    // TODO: Handle byes
 
     return {
         winnerName:  set.slots[winner].entrant.name,
@@ -94,6 +93,9 @@ const LiveConfigPage = () => {
     const event = useSelector((state: RootState) => state.app.event);
     const token = useSelector((state: RootState) => state.app.apiToken);
     const sets = useSelector((state: RootState) => state.data.sets);
+
+    const refreshInterval = 30000;
+    var timeoutId: ReturnType<typeof setTimeout>;
 
     useEffect(() => {
         if (twitch) {
@@ -162,14 +164,22 @@ const LiveConfigPage = () => {
                 var pages = 0;
                 var results: Sets = {}
                 do {
-                    console.log(`Getting ${page}/${pages}`);
+                    if (pages == 0) {
+                        console.log(`Refreshing data`);
+                    } else {
+                        console.log(`Getting page ${page}/${pages}`);
+                    }
                     const response: SetResponse = await Startgg.query(token, input(page, store.getState().app.lastUpdate));
                     pages = response.data.event.sets.pageInfo.totalPages;
                     response.data.event.sets.nodes.forEach((set) => {
-                        results[set.id] = convertSet(set);
+                        const converted: SetData = convertSet(set);
+
+                        if (converted) {
+                            results[set.id] = converted;
+                        }
                     })
                     page += 1;
-                } while (page <= pages && page < 20); //TODO is this right?
+                } while (page <= pages);
 
                 // Update internal storage of sets
                 updateReduxStore(time, results);
@@ -180,18 +190,16 @@ const LiveConfigPage = () => {
             } catch (error) {
                 console.error(`Failed to refresh data: ${error}`);
             }
+
+            timeoutId = setTimeout(refreshData, refreshInterval);
         }
 
-        let intervalId: ReturnType<typeof setInterval>;
         if(!!token) {
             refreshData();
-            intervalId = setInterval(() => {
-                refreshData();
-            }, 30000);
         }
         return () => {
-            if (intervalId) {
-                clearInterval(intervalId);
+            if (timeoutId) {
+                clearTimeout(timeoutId);
             }
         }
     }, [event, token]);

@@ -9,7 +9,7 @@ export class Startgg {
     static api = "https://api.start.gg/gql/alpha";
 
     public static async query<T>(apiToken: string, query: Query): Promise<T> {
-        return this.queryWithRetry(apiToken, query, 2000, 3);
+        return this.queryWithRetry(apiToken, query, 30000, 3);
     }
 
     static async queryWithRetry<T>(apiToken: string, query: Query, delay: number, retries: number): Promise<T> {
@@ -24,7 +24,7 @@ export class Startgg {
         if (response.status === 429 && retries > 0) {
             // Sleep for a bit
             await (new Promise(resolve => setTimeout(resolve, delay)));
-            return this.queryWithRetry(apiToken, query, delay * 2, retries - 1);
+            return this.queryWithRetry(apiToken, query, delay, retries - 1);
         }
 
         if (!response.ok) {

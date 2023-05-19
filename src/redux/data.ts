@@ -45,6 +45,9 @@ const dataSlice = createSlice({
             }
         },
         setStartGGEvent(state, action: PayloadAction<StartGGEvent>) {
+            if (state.event !== action.payload.name || state.tournament !== action.payload.tournament) {
+                state.sets = {};
+            }
             state.tournament = action.payload.tournament;
             state.event = action.payload.name;
             state.imageUrl = action.payload.imageUrl;
