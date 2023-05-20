@@ -59,7 +59,7 @@ export class Startgg {
             const slug = url.slice(index);
 
             const input: Query = {
-                query: "query GetEventID($slug: String) { event(slug: $slug) { id, name, tournament { name, images { type, url } } } }",
+                query: "query GetEventID($slug: String) { event(slug: $slug) { id, name, tournament { name, images { type, url } } entrants(query: {page: 1, perPage: 1}) { pageInfo { totalPages } } } }",
                 variables: { slug }
             };
 
@@ -70,6 +70,7 @@ export class Startgg {
                 tournament: response.data.event.tournament.name,
                 name: response.data.event.name,
                 id: response.data.event.id,
+                entrantCount: response.data.event.entrants.pageInfo.totalPages,
                 imageUrl: imageUrl,
                 startggUrl: url
             } as StartGGEvent;

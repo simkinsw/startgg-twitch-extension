@@ -20,6 +20,7 @@ export type Sets = {[key: number]: SetData};
 export interface DataState {
     tournament: string,
     event: string,
+    entrantCount: number,
     imageUrl: string,
     startggUrl: string,
     sets: Sets,
@@ -28,6 +29,7 @@ export interface DataState {
 const initialData: DataState = {
     tournament: "",
     event: "",
+    entrantCount: -1,
     imageUrl: "",
     startggUrl: "",
     sets: {},
@@ -50,6 +52,7 @@ const dataSlice = createSlice({
             }
             state.tournament = action.payload.tournament;
             state.event = action.payload.name;
+            state.entrantCount = action.payload.entrantCount;
             state.imageUrl = action.payload.imageUrl;
             state.startggUrl = action.payload.startggUrl;
         },

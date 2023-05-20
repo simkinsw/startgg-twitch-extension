@@ -29,7 +29,7 @@ const App = () => {
             twitch.configuration.onChanged(function() {
                 if (twitch.configuration.broadcaster) {
                     const unzipped: DataState = JSON.parse(Pako.inflate(Buffer.Buffer.from(twitch.configuration.broadcaster.content, 'base64'), { to: 'string'}));
-                    dispatch(setStartGGEvent({id: -1, tournament: unzipped.tournament, name: unzipped.event, imageUrl: unzipped.imageUrl, startggUrl: unzipped.startggUrl }));
+                    dispatch(setStartGGEvent({id: -1, tournament: unzipped.tournament, name: unzipped.event, entrantCount: unzipped.entrantCount, imageUrl: unzipped.imageUrl, startggUrl: unzipped.startggUrl }));
                     dispatch(setSets(unzipped.sets));
                 }
             });
@@ -57,7 +57,7 @@ const App = () => {
             const initialState = localStorage.getItem('store');
             if (initialState) {
                 const unzipped: DataState = JSON.parse(Pako.inflate(Buffer.Buffer.from(initialState, 'base64'), { to: 'string'}));
-                dispatch(setStartGGEvent({id: -1, tournament: unzipped.tournament, name: unzipped.event, imageUrl: unzipped.imageUrl, startggUrl: unzipped.startggUrl }));
+                dispatch(setStartGGEvent({id: -1, tournament: unzipped.tournament, name: unzipped.event, entrantCount: unzipped.entrantCount, imageUrl: unzipped.imageUrl, startggUrl: unzipped.startggUrl }));
                 dispatch(setSets(unzipped.sets));
             }
 
