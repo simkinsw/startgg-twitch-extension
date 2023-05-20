@@ -1,5 +1,3 @@
-import Buffer from "buffer";
-import Pako from "pako";
 import { ThemeProvider } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
@@ -7,7 +5,6 @@ import { useEffect, useState } from "react";
 import VideoComponent from "../../components/App/VideoComponent";
 import { theme as muiTheme } from "../../mui-theme";
 import { DataState, Sets, setSets, setStartGGEvent } from "../../redux/data";
-
 
 const App = () => {
     const [theme, setTheme] = useState("light");
@@ -17,28 +14,45 @@ const App = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const localStorageEventHandler = (event: StorageEvent) => {
+        const localStorageEventHandler = async (event: StorageEvent) => {
             if (event.storageArea === localStorage && event.key === "message" && event.newValue) {
-                const unzipped: Sets = JSON.parse(Pako.inflate(Buffer.Buffer.from(event.newValue, 'base64'), { to: 'string'}));
-                dispatch(setSets(unzipped));
+                if (event.newValue !== null) {
+                    const sets: Sets = await import('../../utils/compression')
+                        .then(({ decompress }) => {
+                            return decompress(event.newValue!);
+                        });
+                    dispatch(setSets(sets));
+                }
             }
+        }
+
+        const configure = async (config: string) => {
+            const dataState: DataState = await import('../../utils/compression')
+                .then(({ decompress }) => {
+                    return decompress(config);
+                });
+            dispatch(setStartGGEvent({id: -1, tournament: dataState.tournament, name: dataState.event, entrantCount: dataState.entrantCount, imageUrl: dataState.imageUrl, startggUrl: dataState.startggUrl }));
+            dispatch(setSets(dataState.sets));
+        }
+
+        const handleMessages = async (_target: string, _contentType: string, body: string) => {
+                const sets: Sets = await import('../../utils/compression')
+                    .then(({ decompress }) => {
+                        return decompress(body);
+                    });
+                dispatch(setSets(sets));
         }
 
         if (twitch) {
             // Get initial configuration from  config service
             twitch.configuration.onChanged(function() {
                 if (twitch.configuration.broadcaster) {
-                    const unzipped: DataState = JSON.parse(Pako.inflate(Buffer.Buffer.from(twitch.configuration.broadcaster.content, 'base64'), { to: 'string'}));
-                    dispatch(setStartGGEvent({id: -1, tournament: unzipped.tournament, name: unzipped.event, entrantCount: unzipped.entrantCount, imageUrl: unzipped.imageUrl, startggUrl: unzipped.startggUrl }));
-                    dispatch(setSets(unzipped.sets));
+                    configure(twitch.configuration.broadcaster.content);
                 }
             });
 
             // Get updates from pubsub
-            twitch.listen("broadcast", (target, contentType, body) => {
-                const unzipped: Sets = JSON.parse(Pako.inflate(Buffer.Buffer.from(body, 'base64'), { to: 'string'}));
-                dispatch(setSets(unzipped));
-            });
+            twitch.listen("broadcast", handleMessages);
 
             twitch.onVisibilityChanged((isVisible, _c) => {
                 setIsVisible(isVisible);
@@ -56,9 +70,7 @@ const App = () => {
             // Get initial config from localStorage
             const initialState = localStorage.getItem('store');
             if (initialState) {
-                const unzipped: DataState = JSON.parse(Pako.inflate(Buffer.Buffer.from(initialState, 'base64'), { to: 'string'}));
-                dispatch(setStartGGEvent({id: -1, tournament: unzipped.tournament, name: unzipped.event, entrantCount: unzipped.entrantCount, imageUrl: unzipped.imageUrl, startggUrl: unzipped.startggUrl }));
-                dispatch(setSets(unzipped.sets));
+                configure(initialState);
             }
 
             // Get updates from localStorage events

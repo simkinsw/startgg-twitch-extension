@@ -1,5 +1,4 @@
-import Buffer from "buffer";
-import Pako from "pako";
+// TODO: send a pubsub message when event changes
 import { Box, ThemeProvider, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -68,7 +67,6 @@ const convertSet = (set: Set): SetData => {
         loser = 0;
     }
     
-
     return {
         winnerName:  set.slots[winner].entrant.name,
         winnerSeed:  set.slots[winner].entrant.initialSeedNum,
@@ -113,33 +111,40 @@ const LiveConfigPage = () => {
             dispatch(setSets(results));
         }
 
-        const updateConfigStore = () => {
+        const updateConfigStore = async () => {
             const config =  { ...store.getState().data };
 
             // Grab the top 100 sets based on the "order" field, populated at query time
             config.sets = Object.fromEntries(Object.entries(config.sets).sort((a, b) => b[1].order - a[1].order).slice(0,100));
 
-            const zipped = Buffer.Buffer.from(Pako.gzip(JSON.stringify(config)).buffer).toString('base64');
+            const compressedConfig: string = await import('../../utils/compression')
+                .then(({ compress }) => {
+                    return compress(config);
+                });
+
             if (twitch) {
-                twitch.configuration.set("broadcaster", "1", zipped);
+                twitch.configuration.set("broadcaster", "1", compressedConfig);
             }
             if (process.env.NODE_ENV === "development") {
                 // Use localStorage as a message bus
-                localStorage.setItem("store", zipped);
+                localStorage.setItem("store", compressedConfig);
             }
         }
 
-        const updatePubSub = (results: Sets) => {
-            const zipped = Buffer.Buffer.from(Pako.gzip(JSON.stringify(results)).buffer).toString('base64');
+        const updatePubSub = async (results: Sets) => {
+            const compressedResults: string = await import('../../utils/compression')
+                .then(({ compress }) => {
+                    return compress(results);
+                });
             if (twitch) {
-                twitch.send("broadcast", "text/plain", zipped);
+                twitch.send("broadcast", "text/plain", compressedResults);
             }
 
             if (process.env.NODE_ENV === "development") {
                 // Use localStorage as a message bus
                 // Force it to reprocess every time
                 localStorage.removeItem("message");
-                localStorage.setItem("message", zipped);
+                localStorage.setItem("message", compressedResults);
             }
         }
 
@@ -184,9 +189,9 @@ const LiveConfigPage = () => {
                 // Update internal storage of sets
                 updateReduxStore(time, results);
                 // Update base data for new viewers
-                updateConfigStore();
+                await updateConfigStore();
                 // Publish new sets for existing viewers
-                updatePubSub(results);
+                await updatePubSub(results);
             } catch (error) {
                 console.error(`Failed to refresh data: ${error}`);
             }
