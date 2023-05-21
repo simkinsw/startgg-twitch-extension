@@ -14,33 +14,21 @@ const App = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const localStorageEventHandler = async (event: StorageEvent) => {
-            if (event.storageArea === localStorage && event.key === "message" && event.newValue) {
-                if (event.newValue !== null) {
-                    const sets: Sets = await import('../../utils/compression')
-                        .then(({ decompress }) => {
-                            return decompress(event.newValue!);
-                        });
-                    dispatch(setSets(sets));
-                }
-            }
-        }
-
         const configure = async (config: string) => {
             const dataState: DataState = await import('../../utils/compression')
                 .then(({ decompress }) => {
                     return decompress(config);
                 });
-            dispatch(setStartGGEvent({id: -1, tournament: dataState.tournament, name: dataState.event, entrantCount: dataState.entrantCount, imageUrl: dataState.imageUrl, startggUrl: dataState.startggUrl }));
+            dispatch(setStartGGEvent(dataState.startGGEvent));
             dispatch(setSets(dataState.sets));
         }
 
-        const handleMessages = async (_target: string, _contentType: string, body: string) => {
-                const sets: Sets = await import('../../utils/compression')
-                    .then(({ decompress }) => {
-                        return decompress(body);
-                    });
-                dispatch(setSets(sets));
+        const addSets = async (compressedInput: string) => {
+            const sets: Sets = await import('../../utils/compression')
+                .then(({ decompress }) => {
+                    return decompress(compressedInput);
+                });
+            dispatch(setSets(sets));
         }
 
         if (twitch) {
@@ -52,7 +40,9 @@ const App = () => {
             });
 
             // Get updates from pubsub
-            twitch.listen("broadcast", handleMessages);
+            twitch.listen("broadcast", async (_target: string, _contentType: string, body: string) => {
+                addSets(body);
+            });
 
             twitch.onVisibilityChanged((isVisible, _c) => {
                 setIsVisible(isVisible);
@@ -66,6 +56,15 @@ const App = () => {
             });
         }
 
+        // Get updates from localStorage events
+        const localStorageEventHandler = async (event: StorageEvent) => {
+            if (event.storageArea === localStorage && event.key === "message" && event.newValue) {
+                if (event.newValue !== null) {
+                    addSets(event.newValue);
+                }
+            }
+        }
+
         if (process.env.NODE_ENV === "development") {
             // Get initial config from localStorage
             const initialState = localStorage.getItem('store');
@@ -73,7 +72,6 @@ const App = () => {
                 configure(initialState);
             }
 
-            // Get updates from localStorage events
             window.addEventListener('storage', localStorageEventHandler);
         }
 

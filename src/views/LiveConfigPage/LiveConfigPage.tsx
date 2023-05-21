@@ -7,8 +7,8 @@ import LiveConfig from "../../components/LiveConfig";
 import { darkTheme } from "../../mui-theme";
 import { Startgg } from "../../utils/startGG";
 import { SetData, Sets, setSets } from "../../redux/data";
-import { RootState, store } from "../../redux/store";
-import { setLastUpdate } from "../../redux/app";
+import { RootState, store } from "../../redux/LiveConfig/store";
+import { setLastUpdate } from "../../redux/LiveConfig/app";
 
 //TODO: move this to ./types
 interface Query {
@@ -88,8 +88,8 @@ const LiveConfigPage = () => {
 
     const dispatch = useDispatch();
 
-    const event = useSelector((state: RootState) => state.app.event);
     const token = useSelector((state: RootState) => state.app.apiToken);
+    const eventId = useSelector((state: RootState) => state.data.startGGEvent.id);
     const sets = useSelector((state: RootState) => state.data.sets);
 
     const refreshInterval = 30000;
@@ -150,7 +150,7 @@ const LiveConfigPage = () => {
 
         const refreshData = async () => {
             // Event ID not available yet
-            if (!event || !token) {
+            if (eventId < 0 || !token) {
                 return;
             }
 
@@ -158,7 +158,7 @@ const LiveConfigPage = () => {
                 return {
                     "query": `query Query($eId: ID) { event(id: $eId) { id name sets(page: ${page}, perPage: 25, filters: { state: [3], updatedAfter: ${lastUpdate} }) { pageInfo { total totalPages page perPage sortBy filter } nodes { id completedAt fullRoundText state slots { entrant { initialSeedNum name } standing { stats { score { value } } } } phaseGroup { phase { name phaseOrder } bracketUrl } } } } } `,
                     "variables": {
-                        "eId": event.id,
+                        "eId": eventId,
                     }
                 }
             };
@@ -207,14 +207,14 @@ const LiveConfigPage = () => {
                 clearTimeout(timeoutId);
             }
         }
-    }, [event, token]);
+    }, [eventId, token]);
 
     return (
         <ThemeProvider theme={darkTheme}>
             <LiveConfig />
 
             <Box sx={{ minHeight: "21rem", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                {event && token && sets ? (
+                {eventId && token && sets ? (
                     <Typography color="primary.light">
                         Doing stuff:
                         {JSON.stringify(sets, null, 2)}

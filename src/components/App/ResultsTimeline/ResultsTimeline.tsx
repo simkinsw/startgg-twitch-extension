@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
+import { RootState } from "../../../redux/VideoComponent/store";
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
 import { defaultFilters } from "./filters";

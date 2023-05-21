@@ -12,7 +12,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { clearLocalStorageItem } from "../../../utils/localStorageUtils";
 import { theme } from "../../../mui-theme";
-import { setApiToken } from "../../../redux/app";
+import { setApiToken } from "../../../redux/LiveConfig/app";
 
 interface ResetTokenProps {
     token: string;

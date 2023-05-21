@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { StartGGEvent } from "../types/StartGGEvent";
+import { emptyStartGGEvent, StartGGEvent } from "../types/StartGGEvent";
 
 // Data (startgg set data)
 export type SetData = {
@@ -18,20 +18,12 @@ export type SetData = {
 export type Sets = {[key: number]: SetData};
 
 export interface DataState {
-    tournament: string,
-    event: string,
-    entrantCount: number,
-    imageUrl: string,
-    startggUrl: string,
+    startGGEvent: StartGGEvent,
     sets: Sets,
 };
 
 const initialData: DataState = {
-    tournament: "",
-    event: "",
-    entrantCount: -1,
-    imageUrl: "",
-    startggUrl: "",
+    startGGEvent: emptyStartGGEvent,
     sets: {},
 };
 
@@ -47,14 +39,10 @@ const dataSlice = createSlice({
             }
         },
         setStartGGEvent(state, action: PayloadAction<StartGGEvent>) {
-            if (state.event !== action.payload.name || state.tournament !== action.payload.tournament) {
+            if (state.startGGEvent.event !== action.payload.event || state.startGGEvent.tournament !== action.payload.tournament) {
                 state.sets = {};
             }
-            state.tournament = action.payload.tournament;
-            state.event = action.payload.name;
-            state.entrantCount = action.payload.entrantCount;
-            state.imageUrl = action.payload.imageUrl;
-            state.startggUrl = action.payload.startggUrl;
+            state.startGGEvent = action.payload;
         },
     },
 });

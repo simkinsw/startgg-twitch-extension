@@ -4,11 +4,10 @@ import { useState } from "react";
 import { Startgg } from "../../../utils/startGG";
 import { StartGGEvent } from "../../../types/StartGGEvent";
 import { useDispatch } from "react-redux";
-import { setEvent } from "../../../redux/app";
 import { setStartGGEvent } from "../../../redux/data";
 
 interface EventConfigProps {
-    event: StartGGEvent | null;
+    event?: StartGGEvent;
     token: string;
 }
 
@@ -24,7 +23,6 @@ const EventConfig: React.FC<EventConfigProps> = ({ event, token }) => {
         try {
             const ggEvent = await Startgg.getEvent(token, url!);
             if (ggEvent) {
-                dispatch(setEvent(ggEvent));
                 dispatch(setStartGGEvent(ggEvent));
             } else {
                 setError("Invalid URL");
@@ -45,7 +43,7 @@ const EventConfig: React.FC<EventConfigProps> = ({ event, token }) => {
             {event ? (
                 <Box>
                     <Typography sx={{ fontWeight: "bold", fontSize: "20px" }}>
-                        Currently Selected: {event!.tournament!} - {event!.name}
+                        Currently Selected: {event!.tournament!} - {event!.event}
                     </Typography>
                     <br />
                     <Typography>

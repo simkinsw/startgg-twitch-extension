@@ -68,7 +68,7 @@ export class Startgg {
 
             return {
                 tournament: response.data.event.tournament.name,
-                name: response.data.event.name,
+                event: response.data.event.name,
                 id: response.data.event.id,
                 entrantCount: response.data.event.entrants.pageInfo.totalPages,
                 imageUrl: imageUrl,
