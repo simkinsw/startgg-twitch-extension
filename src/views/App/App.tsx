@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 
 import VideoComponent from "../../components/App/VideoComponent";
 import { theme as muiTheme } from "../../mui-theme";
-import { DataState, Sets, setSets, setStartGGEvent } from "../../redux/data";
+import { DataState, setSets, setStartGGEvent } from "../../redux/data";
+import { store } from "../../redux/VideoComponent/store";
 
 const App = () => {
     const [theme, setTheme] = useState("light");
@@ -23,12 +24,15 @@ const App = () => {
             dispatch(setSets(dataState.sets));
         }
 
-        const addSets = async (compressedInput: string) => {
-            const sets: Sets = await import('../../utils/compression')
+        const handleUpdate = async (compressedInput: string) => {
+            const dataState: DataState = await import('../../utils/compression')
                 .then(({ decompress }) => {
                     return decompress(compressedInput);
                 });
-            dispatch(setSets(sets));
+            if (dataState.startGGEvent.id !== store.getState().data.startGGEvent.id) {
+                dispatch(setStartGGEvent(dataState.startGGEvent));
+            }
+            dispatch(setSets(dataState.sets));
         }
 
         if (twitch) {
@@ -41,7 +45,7 @@ const App = () => {
 
             // Get updates from pubsub
             twitch.listen("broadcast", async (_target: string, _contentType: string, body: string) => {
-                addSets(body);
+                handleUpdate(body);
             });
 
             twitch.onVisibilityChanged((isVisible, _c) => {
@@ -60,7 +64,7 @@ const App = () => {
         const localStorageEventHandler = async (event: StorageEvent) => {
             if (event.storageArea === localStorage && event.key === "message" && event.newValue) {
                 if (event.newValue !== null) {
-                    addSets(event.newValue);
+                    handleUpdate(event.newValue);
                 }
             }
         }

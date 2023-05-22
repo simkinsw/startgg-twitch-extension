@@ -1,4 +1,3 @@
-// TODO: send a pubsub message when event changes
 import { Box, ThemeProvider, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -111,43 +110,6 @@ const LiveConfigPage = () => {
             dispatch(setSets(results));
         }
 
-        const updateConfigStore = async () => {
-            const config =  { ...store.getState().data };
-
-            // Grab the top 100 sets based on the "order" field, populated at query time
-            config.sets = Object.fromEntries(Object.entries(config.sets).sort((a, b) => b[1].order - a[1].order).slice(0,100));
-
-            const compressedConfig: string = await import('../../utils/compression')
-                .then(({ compress }) => {
-                    return compress(config);
-                });
-
-            if (twitch) {
-                twitch.configuration.set("broadcaster", "1", compressedConfig);
-            }
-            if (process.env.NODE_ENV === "development") {
-                // Use localStorage as a message bus
-                localStorage.setItem("store", compressedConfig);
-            }
-        }
-
-        const updatePubSub = async (results: Sets) => {
-            const compressedResults: string = await import('../../utils/compression')
-                .then(({ compress }) => {
-                    return compress(results);
-                });
-            if (twitch) {
-                twitch.send("broadcast", "text/plain", compressedResults);
-            }
-
-            if (process.env.NODE_ENV === "development") {
-                // Use localStorage as a message bus
-                // Force it to reprocess every time
-                localStorage.removeItem("message");
-                localStorage.setItem("message", compressedResults);
-            }
-        }
-
         const refreshData = async () => {
             // Event ID not available yet
             if (eventId < 0 || !token) {
@@ -188,10 +150,6 @@ const LiveConfigPage = () => {
 
                 // Update internal storage of sets
                 updateReduxStore(time, results);
-                // Update base data for new viewers
-                await updateConfigStore();
-                // Publish new sets for existing viewers
-                await updatePubSub(results);
             } catch (error) {
                 console.error(`Failed to refresh data: ${error}`);
             }

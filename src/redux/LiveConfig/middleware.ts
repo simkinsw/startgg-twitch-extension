@@ -1,16 +1,18 @@
-import { createListenerMiddleware } from '@reduxjs/toolkit';
-import { setStartGGEvent } from '../data';
+import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
+import { handleDispatch, setSets, setStartGGEvent } from '../data';
 
-const listenerMiddleware = createListenerMiddleware();
+import type { TypedStartListening } from '@reduxjs/toolkit'
+import type { RootState, AppDispatch } from './store'
 
-listenerMiddleware.startListening({
-    actionCreator: setStartGGEvent,
-    effect: (action, listenerApi) => {
-        const twitch = window.Twitch?.ext;
-        if (twitch) {
-            twitch.send("broadcast", "text/plain", compressedResults);
-        }
-    }
+const listenerMiddleware = createListenerMiddleware()
+
+type AppStartListening = TypedStartListening<RootState, AppDispatch>
+const startAppListening = listenerMiddleware.startListening as AppStartListening
+
+// Listeners
+startAppListening({
+    matcher: isAnyOf(setStartGGEvent, setSets),
+    effect: handleDispatch
 });
 
 export default listenerMiddleware;
