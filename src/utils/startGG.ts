@@ -1,6 +1,7 @@
+import { SetData, Sets } from "../redux/data";
 import { StartGGEvent } from "../types/StartGGEvent";
 
-interface Query {
+export interface Query {
     query: string;
     variables?: object;
 }
@@ -78,5 +79,106 @@ export class Startgg {
             return undefined;
         }
     }
+
+    static async getSets(apiToken: string, eventId: number, lastUpdate: number): Promise<Sets> {
+        const input = (page: number): Query => {
+            return {
+                "query": `query { event(id: ${eventId}) { id name sets(page: ${page}, perPage: 25, filters: { state: [3], updatedAfter: ${lastUpdate} }) { pageInfo { total totalPages page perPage sortBy filter } nodes { id completedAt fullRoundText state slots { entrant { initialSeedNum name } standing { stats { score { value } } } } phaseGroup { phase { name phaseOrder } bracketUrl } } } } } `,
+            }
+        }
+
+        var results: Sets = {}
+        try {
+            // Add a 2 minute buffer to favor duplicates over missing data (completedAt vs updatedAfter is a little inconsistent)
+            var page = 1;
+            var pages = 0;
+            do {
+                if (pages == 0) {
+                    console.log(`Refreshing data`);
+                } else {
+                    console.log(`Getting page ${page}/${pages}`);
+                }
+                const response: SetResponse = await Startgg.query(apiToken, input(page));
+                pages = response.data.event.sets.pageInfo.totalPages;
+                response.data.event.sets.nodes.forEach((set) => {
+                    const converted: SetData = convertSet(set);
+
+                    if (converted) {
+                        results[set.id] = converted;
+                    }
+                })
+                page += 1;
+            } while (page <= pages);
+        } catch (error) {
+            console.error(`Failed to refresh data: ${error}`);
+        }
+        return results;
+    }
 }
 
+
+interface SetResponse {
+    data: {
+        event: {
+            id: number,
+            sets: {
+                pageInfo: {
+                    totalPages: number,
+                }
+                nodes: [Set]
+            }
+        }
+    }
+}
+
+interface Set {
+    id: number,
+    completedAt: number,
+    fullRoundText: string,
+    state: number,
+    slots: [
+        {
+            entrant: {
+                initialSeedNum: number,
+                name: string,
+            }
+            standing: {
+                stats: {
+                    score: {
+                        value: number,
+                    }
+                }
+            }
+        }
+    ]
+    phaseGroup: {
+        phase: {
+            name: string,
+            phaseOrder: number,
+        }
+        bracketUrl: string,
+    }
+}
+
+const convertSet = (set: Set): SetData => { 
+    var winner = 0;
+    var loser = 1;
+    if (set.slots[0].standing.stats.score.value < set.slots[1].standing.stats.score.value) {
+        winner = 1;
+        loser = 0;
+    }
+    
+    return {
+        winnerName:  set.slots[winner].entrant.name,
+        winnerSeed:  set.slots[winner].entrant.initialSeedNum,
+        winnerGames: set.slots[winner].standing.stats.score.value,
+        loserName: set.slots[loser].entrant.name,
+        loserSeed: set.slots[loser].entrant.initialSeedNum,
+        loserGames: set.slots[loser].standing.stats.score.value, 
+        roundName: set.fullRoundText,
+        phaseName: set.phaseGroup.phase.name,
+        url: set.phaseGroup.bracketUrl,
+        // Somewhat hacky but cheap ordering
+        order: set.phaseGroup.phase.phaseOrder * set.completedAt,
+    }
+}
