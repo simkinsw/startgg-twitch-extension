@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { StartGGEvent } from "../types/StartGGEvent";
+import { emptyStartGGEvent, StartGGEvent } from "../types/StartGGEvent";
 
 // Data (startgg set data)
 export type SetData = {
@@ -18,18 +18,12 @@ export type SetData = {
 export type Sets = {[key: number]: SetData};
 
 export interface DataState {
-    tournament: string,
-    event: string,
-    imageUrl: string,
-    startggUrl: string,
+    startGGEvent: StartGGEvent,
     sets: Sets,
 };
 
-const initialData: DataState = {
-    tournament: "",
-    event: "",
-    imageUrl: "",
-    startggUrl: "",
+export const initialData: DataState = {
+    startGGEvent: emptyStartGGEvent,
     sets: {},
 };
 
@@ -39,16 +33,18 @@ const dataSlice = createSlice({
     reducers: {
         // This merges updates into the store
         setSets(state, action: PayloadAction<Sets>) {
+            console.log("Updating set", action.payload);
             state.sets = {
                 ...state.sets,
                 ...action.payload,
             }
         },
         setStartGGEvent(state, action: PayloadAction<StartGGEvent>) {
-            state.tournament = action.payload.tournament;
-            state.event = action.payload.name;
-            state.imageUrl = action.payload.imageUrl;
-            state.startggUrl = action.payload.startggUrl;
+            console.log("Updating event", action.payload);
+            if (state.startGGEvent.id !== action.payload.id) {
+                state.sets = {};
+            }
+            state.startGGEvent = action.payload;
         },
     },
 });

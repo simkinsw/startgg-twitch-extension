@@ -1,14 +1,14 @@
-const fs = require("fs");
 const path = require("path");
 const webpack = require("webpack");
 
-//const CleanWebpackPlugin = require('clean-webpack-plugin')
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // defines where the bundle file will live
 const bundlePath = path.resolve(__dirname, "dist/");
 
 module.exports = (_env, argv) => {
+
     let entryPoints = {
         VideoComponent: {
             path: "./src/VideoComponent.js",
@@ -29,15 +29,16 @@ module.exports = (_env, argv) => {
 
     let entry = {};
 
-    // edit webpack plugins here!
+    // Default plugins
     let plugins = [
-        /*new CleanWebpackPlugin(['dist']),*/
-        new webpack.HotModuleReplacementPlugin(),
+        new CleanWebpackPlugin(),
     ];
 
     for (const name in entryPoints) {
         if (entryPoints[name].build) {
             entry[name] = entryPoints[name].path;
+
+            // Prod-specific configs
             if (argv.mode === "production") {
                 plugins.push(
                     new HtmlWebpackPlugin({
@@ -48,6 +49,11 @@ module.exports = (_env, argv) => {
                     })
                 );
             }
+
+            // Dev-specific configs
+            if (argv.mode === "development") {
+                plugins.push(new webpack.HotModuleReplacementPlugin());
+            }
         }
     }
 
@@ -55,7 +61,7 @@ module.exports = (_env, argv) => {
         //entry points for webpack- remove if not used/needed
         entry,
         optimization: {
-            minimize: false, // this setting is default to false to pass review more easily. you can opt to set this to true to compress the bundles, but also expect an email from the review team to get the full source otherwise.
+            minimize: true, // this setting is default to false to pass review more easily. you can opt to set this to true to compress the bundles, but also expect an email from the review team to get the full source otherwise.
         },
         module: {
             rules: [
@@ -82,6 +88,9 @@ module.exports = (_env, argv) => {
             filename: "[name].bundle.js",
             path: bundlePath,
         },
+        performance: {
+            maxEntrypointSize: 512000,
+        },
         plugins,
     };
 
@@ -96,6 +105,7 @@ module.exports = (_env, argv) => {
         };
         config.devServer.https = true;
     }
+
     if (argv.mode === "production") {
         config.optimization.splitChunks = {
             cacheGroups: {

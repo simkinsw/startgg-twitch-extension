@@ -1,11 +1,11 @@
 import startGGButton from "../../../assets/startGGButton.png";
 import { Box, Button, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
+import { RootState } from "../../../redux/LiveConfig/store";
 
 const TournamentBanner = () => {
     const tournament = useSelector((state: RootState) => state.data.tournament);
-    const event = useSelector((state: RootState) => state.data.event);
+    const event = useSelector((state: RootState) => state.data.eventName);
     const imageUrl = useSelector((state: RootState) => state.data.imageUrl);
     const startggUrl = useSelector((state: RootState) => state.data.startggUrl);
 

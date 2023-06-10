@@ -1,0 +1,13 @@
+{
+    "depcheck": {
+        "ignoreMatches": [
+            "buffer",
+            "babel-loader",
+            "css-loader",
+            "file-loader",
+            "style-loader",
+            "webpack-bundle-analyzer",
+            "webpack-cli"
+        ]
+    }
+}

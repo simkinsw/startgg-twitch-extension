@@ -5,3 +5,8 @@
 /build
 /dist
 
+# vscode
+.vscode
+
+# webpack
+stats.json
