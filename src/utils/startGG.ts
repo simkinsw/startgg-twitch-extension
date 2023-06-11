@@ -1,9 +1,14 @@
 import { SetData, Sets } from "../redux/data";
 import { StartGGEvent } from "../types/StartGGEvent";
+import type { CurrentUserQuery } from "../services/gql/types-and-hooks";
 
 export interface Query {
     query: string;
     variables?: object;
+}
+
+export interface Data<T> {
+    data: T
 }
 
 export class Startgg {
@@ -39,14 +44,11 @@ export class Startgg {
 
     static async validateToken(token: string) {
         const input: Query = { 
-            query: "query GetSets($phaseId: ID) { phase(id: $phaseId) { id name sets(page: 1, perPage: 3) { nodes { id fullRoundText displayScore } } } }",
-            variables: {
-                phaseId: 1285345,
-            }
+            query: "query { currentUser { id } }",
         };
 
         try {
-            await this.query(token, input);
+            const currentUser: Data<CurrentUserQuery> = await this.query(token, input);
             return true;
         } catch (err) {
             return false;

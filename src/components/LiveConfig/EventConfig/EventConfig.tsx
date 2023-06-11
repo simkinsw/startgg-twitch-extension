@@ -3,20 +3,19 @@ import { theme } from "../../../mui-theme";
 import { useState } from "react";
 import { Startgg } from "../../../utils/startGG";
 import { StartGGEvent } from "../../../types/StartGGEvent";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setStartGGEvent } from "../../../redux/data";
 import { setLastUpdate } from "../../../redux/LiveConfig/app";
+import { RootState } from "../../../redux/LiveConfig/store";
 
-interface EventConfigProps {
-    event?: StartGGEvent;
-    token: string;
-}
-
-const EventConfig: React.FC<EventConfigProps> = ({ event, token }) => {
+const EventConfig: React.FC = () => {
     const [url, setUrl] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
+
+    const token = useSelector((state: RootState) => state.app.apiToken);
+    const event: StartGGEvent = useSelector((state: RootState) => state.data.startGGEvent);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();

@@ -3,10 +3,6 @@ import { dataReducer, DataState } from "../data";
 import { appReducer } from "./app";
 import subscriberMiddleware from "./middleware";
 
-export interface RootState {
-    data: DataState,
-}
-
 export const store = configureStore({
     reducer: {
         app: appReducer,
@@ -16,3 +12,4 @@ export const store = configureStore({
 });
 
 export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>

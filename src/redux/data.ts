@@ -33,14 +33,12 @@ const dataSlice = createSlice({
     reducers: {
         // This merges updates into the store
         setSets(state, action: PayloadAction<Sets>) {
-            console.log("Updating set", action.payload);
             state.sets = {
                 ...state.sets,
                 ...action.payload,
             }
         },
         setStartGGEvent(state, action: PayloadAction<StartGGEvent>) {
-            console.log("Updating event", action.payload);
             if (state.startGGEvent.id !== action.payload.id) {
                 state.sets = {};
             }
