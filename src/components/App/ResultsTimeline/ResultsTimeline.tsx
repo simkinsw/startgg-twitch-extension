@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/VideoComponent/store";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { useState } from "react";
 import { defaultFilters } from "./filters";
 import SetBox from "../SetBox";
