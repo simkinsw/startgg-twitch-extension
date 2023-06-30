@@ -6,16 +6,27 @@ export interface AppState {
 };
 
 const initialState: AppState = {
-    apiToken: "",
+    apiToken: localStorage.getItem("startGGAPIToken") || "",
     lastUpdate: -1,
 };
+
+export interface TokenAction {
+    apiToken: string,
+    store: boolean,
+}
 
 const appSlice = createSlice({
     name: "app",
     initialState,
     reducers: {
-        setApiToken(state, action: PayloadAction<string>) {
-            state.apiToken = action.payload;
+        setApiToken(state, action: PayloadAction<TokenAction>) {
+            const token = action.payload.apiToken;
+
+            localStorage.removeItem("startGGAPIToken");
+            state.apiToken = token;
+            if (action.payload.store) {
+                localStorage.setItem("startGGAPIToken", token);
+            }
         },
         setLastUpdate(state, action: PayloadAction<number>) {
             state.lastUpdate = action.payload;

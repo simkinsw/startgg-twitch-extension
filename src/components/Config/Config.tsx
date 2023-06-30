@@ -1,24 +1,11 @@
 import { Box } from "@mui/material";
 import ConfigCard from "../LiveConfig/ConfigCard";
 import TokenConfig from "../LiveConfig/TokenConfig";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setApiToken } from "../../redux/LiveConfig/app";
+import { useSelector } from "react-redux";
 import { RootState } from "../../redux/LiveConfig/store";
-import { getLocalStorageItem } from "../../utils/localStorageUtils";
 
 const Config = () => {
-    const dispatch = useDispatch();
-
-    const localStorageToken = getLocalStorageItem("startGGAPIToken");
-    const reduxToken = useSelector((state: RootState) => state.app.apiToken);
-    const token = !!reduxToken ? reduxToken : localStorageToken;
-
-    useEffect(() => {
-        if (localStorageToken && !reduxToken) {
-            dispatch(setApiToken(localStorageToken));
-        }
-    }, [localStorageToken, reduxToken, dispatch]);
+    const token = useSelector((state: RootState) => state.app.apiToken);
 
     return (
         <Box
@@ -30,7 +17,7 @@ const Config = () => {
             }}
         >
             <ConfigCard heading="Set API Token" completed={!!token}>
-                <TokenConfig token={token} />
+                <TokenConfig />
             </ConfigCard>
         </Box>
     );

@@ -1,17 +1,15 @@
+import { useSelector } from "react-redux";
 import EnterToken from "./EnterToken";
 import ResetToken from "./ResetToken";
+import { RootState } from "../../../redux/LiveConfig/store";
 
-interface TokenConfigProps {
-    token: string | null;
-}
-
-const TokenConfig: React.FC<TokenConfigProps> = ({ token }) => {
+const TokenConfig: React.FC = () => {
     
-    //TODO: get token from redux once its saved
+    const token = useSelector((state: RootState) => state.app.apiToken);
 
     return (
         token ?
-            <ResetToken token={token} />
+            <ResetToken />
             :
             <EnterToken />
     );

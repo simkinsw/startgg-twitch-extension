@@ -10,13 +10,12 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { theme } from "../../../mui-theme";
-import { Startgg } from "../../../utils/startGG";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import StyledTooltip from "../StyledTooltip";
 import { useDispatch } from "react-redux";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { setLocalStorageItem } from "../../../utils/localStorageUtils";
 import { setApiToken } from "../../../redux/LiveConfig/app";
+import { useLoginMutation } from "../../../services/startgg";
 
 const EnterToken = () => {
     const [token, setToken] = useState("");
@@ -28,6 +27,8 @@ const EnterToken = () => {
     const handleClickShowToken = () => setShowToken((show) => !show);
 
     const dispatch = useDispatch();
+
+    const [login, _result] = useLoginMutation();
 
     const handleTokenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setToken(event.target.value);
@@ -43,14 +44,12 @@ const EnterToken = () => {
         event.preventDefault();
         setLoading(true);
         try {
-            const isValid = await Startgg.validateToken(token);
-            if (!isValid) {
-                setError("Invalid token");
+
+            const valid = await login(token).unwrap();
+            if (valid) {
+                dispatch(setApiToken({apiToken: token, store: storeToken}));
             } else {
-                dispatch(setApiToken(token)); //add to redux store
-                if (storeToken) {
-                    setLocalStorageItem("startGGAPIToken", token);
-                }
+                setError("Invalid token");
             }
         } catch (error) {
             setError("An error occurred while validating the token");

@@ -9,25 +9,21 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useDispatch } from "react-redux";
-import { clearLocalStorageItem } from "../../../utils/localStorageUtils";
+import { useDispatch, useSelector } from "react-redux";
 import { theme } from "../../../mui-theme";
 import { setApiToken } from "../../../redux/LiveConfig/app";
+import { RootState } from "../../../redux/LiveConfig/store";
 
-interface ResetTokenProps {
-    token: string;
-}
-
-const ResetToken: React.FC<ResetTokenProps> = ({ token }) => {
+const ResetToken: React.FC = () => {
     const [showToken, setShowToken] = useState(false);
+
     const dispatch = useDispatch();
+    const token = useSelector((state: RootState) => state.app.apiToken);
+    const resetToken = () => {
+        dispatch(setApiToken({apiToken: "", store: false}));
+    };
 
     const handleClickShowToken = () => setShowToken((show) => !show);
-
-    const resetToken = () => {
-        dispatch(setApiToken(""));
-        clearLocalStorageItem("startGGAPIToken");
-    };
 
     return (
         <Box

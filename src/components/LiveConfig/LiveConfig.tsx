@@ -2,27 +2,14 @@ import { Box, Typography } from "@mui/material";
 import TokenConfig from "./TokenConfig";
 import ConfigCard from "./ConfigCard";
 import EventConfig from "./EventConfig";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { getLocalStorageItem } from "../../utils/localStorageUtils";
+import { useSelector } from "react-redux";
 import { RootState } from "../../redux/LiveConfig/store";
-import { setApiToken } from "../../redux/LiveConfig/app";
 import { StartGGEvent } from "../../types/StartGGEvent";
 
 const LiveConfig: React.FC = () => {
-    const dispatch = useDispatch();
 
-    const localStorageToken = getLocalStorageItem("startGGAPIToken");
-    const reduxToken = useSelector((state: RootState) => state.app.apiToken);
-
-    const token = !!reduxToken ? reduxToken : localStorageToken;
+    const token = useSelector((state: RootState) => state.app.apiToken);
     const event: StartGGEvent = useSelector((state: RootState) => state.data.startGGEvent);
-
-    useEffect(() => {
-        if (localStorageToken && !reduxToken) {
-            dispatch(setApiToken(localStorageToken));
-        }
-    }, [localStorageToken, reduxToken, dispatch]);
 
     const completedTasks = [!!token, !!event.event].filter(Boolean).length;
 
@@ -50,10 +37,10 @@ const LiveConfig: React.FC = () => {
                     </Typography>
                 </Box>
                 <ConfigCard heading="Set API Token" completed={!!token}>
-                    <TokenConfig token={token} />
+                    <TokenConfig />
                 </ConfigCard>
                 <ConfigCard heading="Select Event" completed={!!event.event}>
-                    <EventConfig event={event} token={token!} />
+                    <EventConfig />
                 </ConfigCard>
             </Box>
         </Box>

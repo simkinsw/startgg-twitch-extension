@@ -1,19 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { appReducer, AppState } from "./app";
-import { dataReducer, DataState } from "../data";
+import { appReducer } from "./app";
+import { dataReducer } from "../data";
 import listenerMiddleware from "./middleware";
-
-export interface RootState {
-    app: AppState,
-    data: DataState,
-}
+import { startggApi } from "../../services/startgg";
 
 export const store = configureStore({
     reducer: {
         app: appReducer,
         data: dataReducer,
+        [startggApi.reducerPath]: startggApi.reducer,
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(listenerMiddleware.middleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware()
+        .prepend(listenerMiddleware.middleware)
+        .concat(startggApi.middleware),
 });
 
 export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
