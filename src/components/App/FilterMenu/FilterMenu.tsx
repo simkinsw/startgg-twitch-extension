@@ -1,9 +1,11 @@
-import { Box, Select, MenuItem } from "@mui/material";
-import { BsLightningCharge } from "react-icons/bs";
-import { TbCrown } from "react-icons/tb";
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import CustomToggleButton from "../ResultsTimeline/ToggleButton";
+import { Box, Select, MenuItem, Button, Menu, TextField } from "@mui/material";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Filters } from "../ResultsTimeline/filters";
+import { useState } from "react";
+import { MdOutlineCheckBox, MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
+
+//TODO: this might need to get broken up...
 
 interface FilterMenuProps {
     phases: string[];
@@ -16,11 +18,44 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
     filters,
     setFilters,
 }) => {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedItems, setSelectedItems] = useState<String[]>([]);
+    const [searchValue, setSearchValue] = useState('');
+
+    const handleSearchChange = (event: any) => {
+        setSearchValue(event.target.value);
+        setFilters({ ...filters, search: event.target.value.toLowerCase() })
+    };
+
+    const handleClick = (event: any) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleItemClick = (item: string) => () => {
+        if (selectedItems.includes(item)) {
+            setSelectedItems(
+                selectedItems.filter((selected) => selected !== item)
+            );
+        } else {
+            setSelectedItems([...selectedItems, item]);
+        }
+
+        if (item === "Upsets") {
+            setFilters({ ...filters, upset: !filters.upset });
+        } else if (item === "Top Seeds") {
+            setFilters({ ...filters, seeded: !filters.seeded });
+        }
+    };
+
     return (
         <Box
             sx={{
                 display: "flex",
-                justifyContent: "flex-end",
+                justifyContent: "space-between",
                 gap: "2rem",
                 margin: "2rem",
                 marginBottom: "4rem",
@@ -32,10 +67,9 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                     setFilters({ ...filters, phase: e.target.value })
                 }
                 IconComponent={() => (
-                    <ArrowDropDownIcon sx={{ fontSize: "4rem" }} />
+                    <ArrowDropDownIcon sx={{ fontSize: "5rem" }} />
                 )}
                 sx={{
-                    marginRight: "auto",
                     fontSize: "4rem",
                     flex: "0 0 32rem",
                 }}
@@ -53,30 +87,74 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                     </MenuItem>
                 ))}
             </Select>
-            <CustomToggleButton
-                value="upsets"
-                selected={filters.upset}
-                onChange={() =>
-                    setFilters({ ...filters, upset: !filters.upset })
-                }
+
+            {/*TODO: big label looks bad*/}
+            <TextField
+                label="Player Search"
+                variant="outlined"
+                value={searchValue}
+                onChange={handleSearchChange}
+                InputProps={{sx: { fontSize: "4rem" }}}
+                InputLabelProps={{
+                    sx: { 
+                        fontSize: "4rem",
+                        "&.MuiInputLabel-shrink": { marginTop: "-1rem" },
+                    }
+                }}
+            />
+
+            <Button
+                variant="contained"
+                color="primary"
+                type="submit"
                 disableRipple
+                onClick={handleClick}
             >
-                <BsLightningCharge
-                    style={{ paddingRight: "4px", fontSize: "4.5rem" }}
-                />
-                Upsets
-            </CustomToggleButton>
-            <CustomToggleButton
-                value="seeded"
-                selected={filters.seeded}
-                onChange={() =>
-                    setFilters({ ...filters, seeded: !filters.seeded })
-                }
-                disableRipple
+                <FilterListIcon sx={{ fontSize: "6rem" }} />
+            </Button>
+            <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                }}
+                transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                }}
+                PaperProps={{
+                    style: {
+                        marginTop: "8px",
+                    },
+                }}
             >
-                <TbCrown style={{ paddingRight: "4px", fontSize: "4.5rem" }} />
-                Top Seeds
-            </CustomToggleButton>
+                <MenuItem
+                    sx={{ fontSize: "4rem", display: "flex", gap: "1rem" }}
+                    onClick={handleItemClick("Upsets")}
+                >
+                    {
+                        selectedItems.includes("Upsets") ?
+                        <MdOutlineCheckBox />
+                        :
+                        <MdOutlineCheckBoxOutlineBlank />
+                    }
+                    Upsets Only
+                </MenuItem>
+                <MenuItem 
+                    sx={{ fontSize: "4rem", display: "flex", gap: "1rem" }}
+                    onClick={handleItemClick('Top Seeds')}
+                >
+                    {
+                        selectedItems.includes("Top Seeds") ?
+                        <MdOutlineCheckBox />
+                        :
+                        <MdOutlineCheckBoxOutlineBlank />
+                    }
+                    Top Seeds Only
+                </MenuItem>
+            </Menu>
         </Box>
     );
 };
