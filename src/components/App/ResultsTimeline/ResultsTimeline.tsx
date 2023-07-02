@@ -32,7 +32,13 @@ const ResultsTimeline = () => {
                 (set) => set.phaseName === filters.phase
             );
         }
-        return tempSets;
+        if (filters.search) {
+            tempSets = tempSets.filter(
+                (set) => set.winnerName.toLowerCase().includes(filters.search) 
+                        || set.loserName.toLowerCase().includes(filters.search)
+            );
+        }
+        return tempSets.sort((a,b) => b.order - a.order);
     }
     const setData = getSetData();
 

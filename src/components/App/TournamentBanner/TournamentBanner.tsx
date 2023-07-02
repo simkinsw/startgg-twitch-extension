@@ -4,10 +4,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/LiveConfig/store";
 
 const TournamentBanner = () => {
-    const tournament = useSelector((state: RootState) => state.data.tournament);
-    const event = useSelector((state: RootState) => state.data.eventName);
-    const imageUrl = useSelector((state: RootState) => state.data.imageUrl);
-    const startggUrl = useSelector((state: RootState) => state.data.startggUrl);
+    const tournament = useSelector((state: RootState) => state.data.startGGEvent.tournament);
+    const event = useSelector((state: RootState) => state.data.startGGEvent.event);
+    const imageUrl = useSelector((state: RootState) => state.data.startGGEvent.imageUrl);
+    const startggUrl = useSelector((state: RootState) => state.data.startGGEvent.startggUrl);
 
     return (
         <Box 
@@ -26,7 +26,7 @@ const TournamentBanner = () => {
             />
             <Box>
                 <Typography variant="h1" color="primary.contrastText">{tournament}</Typography>
-                <Typography variant="h2" color="primary.contrastText">{event}</Typography>
+                <Typography variant="h3" color="primary.contrastText">{event}</Typography>
             </Box>
             <Button
                 variant="contained"
