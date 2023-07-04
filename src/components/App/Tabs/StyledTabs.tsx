@@ -10,6 +10,7 @@ export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple {.
     ({ theme }) => ({
         fontSize: theme.typography.h3.fontSize,
         color: theme.palette.typography.contrastUnfocused,
+        paddingLeft: "1rem",
         "&.Mui-selected": {
             color: theme.palette.typography.contrastFocused
         },
