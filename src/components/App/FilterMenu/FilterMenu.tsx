@@ -1,9 +1,11 @@
-import { Box, Select, MenuItem, Button, Menu, TextField } from "@mui/material";
+import { Box, Select, MenuItem, Button, Menu, TextField, IconButton } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ClearIcon from "@mui/icons-material/Clear";
 import { Filters } from "../ResultsTimeline/filters";
 import { useState } from "react";
 import { MdOutlineCheckBox, MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
+import { theme } from "../../../mui-theme";
 
 //TODO: this might need to get broken up...
 
@@ -26,6 +28,11 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
         setSearchValue(event.target.value);
         setFilters({ ...filters, search: event.target.value.toLowerCase() })
     };
+
+    const handleSearchClear = () => {
+        setSearchValue("");
+        setFilters({ ...filters, search: "" });
+    }
 
     const handleClick = (event: any) => {
         setAnchorEl(event.currentTarget);
@@ -94,7 +101,17 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                 variant="outlined"
                 value={searchValue}
                 onChange={handleSearchChange}
-                InputProps={{sx: { fontSize: "4rem" }}}
+                InputProps={{
+                    endAdornment: (
+                        <IconButton
+                          sx={{ visibility: searchValue ? "visible" : "hidden" }}
+                          onClick={handleSearchClear}
+                        >
+                          <ClearIcon sx={{ fontSize: "4rem", color:theme.palette.primary.main }} />
+                        </IconButton>
+                    ),
+                    sx: { fontSize: "4rem" }
+                }}
                 InputLabelProps={{
                     sx: { 
                         fontSize: "4rem",

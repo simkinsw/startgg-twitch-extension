@@ -12,21 +12,21 @@ const TournamentBanner = () => {
     return (
         <Box 
             bgcolor="primary.main"
-            sx={{ display: 'flex', alignItems: 'center' }}
+            sx={{ display: 'flex', alignItems: 'center', marginRight: "2rem" }}
         >
             <img 
                 src={imageUrl}
                 alt="" 
                 style={{ 
-                    width: "20rem", 
+                    flex: "0 0 20rem", 
                     height: "20rem", 
                     borderBottomRightRadius: "1rem", 
-                    marginRight: "4rem" 
+                    marginRight: "2rem" 
                 }}
             />
-            <Box>
-                <Typography variant="h1" color="primary.contrastText">{tournament}</Typography>
-                <Typography variant="h3" color="primary.contrastText">{event}</Typography>
+            <Box width="72rem">
+                <Typography variant="h1" noWrap color="primary.contrastText">{tournament}</Typography>
+                <Typography variant="h3" noWrap color="primary.contrastText">{event}</Typography>
             </Box>
             <Button
                 variant="contained"
@@ -35,7 +35,7 @@ const TournamentBanner = () => {
                 disableElevation
                 color="secondary"
                 target="_blank"
-                sx={{ padding: 2, marginRight: 2, marginLeft: 'auto' }}
+                sx={{ padding: 2, marginLeft: 'auto' }}
             >
                 <img
                     src={startGGButton}

@@ -22,8 +22,8 @@ export const TabPanel = (props: TabPanelProps) => {
                 <Box
                     sx={{
                         p: 3,
-                        transform: "translateY(33rem)",
-                        maxHeight: "105rem",
+                        transform: "translateY(31rem)",
+                        maxHeight: "107rem",
                         overflowY: "scroll",
                         scrollbarWidth: "thin"
                     }}

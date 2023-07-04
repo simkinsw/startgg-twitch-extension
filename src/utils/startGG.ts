@@ -58,8 +58,12 @@ export class Startgg {
     //https://www.start.gg/tournament/midlane-melee-80/event/melee-singles
     static async getEvent(apiToken: string, url: string) {
         try {
+            //TODO: I have the feeling that this could be improved...
             const index = url.indexOf("tournament");
-            const slug = url.slice(index);
+            let slug = url.slice(index);
+            slug = slug.split("/").slice(0,4).join("/");
+
+            console.log(slug);
 
             const input: Query = {
                 query: "query GetEventID($slug: String) { event(slug: $slug) { id, name, tournament { name, images { type, url } } entrants(query: {page: 1, perPage: 1}) { pageInfo { totalPages } } } }",

@@ -41,7 +41,7 @@ export const theme = createTheme({
         htmlFontSize: 8,
         fontFamily: 'Lato',
         h1: {
-            fontSize: 72,
+            fontSize: 64,
             fontWeight: 600,
             fontFamily: 'Fredoka',
         },
@@ -51,7 +51,7 @@ export const theme = createTheme({
             fontFamily: 'Fredoka',
         },
         h3: {
-            fontSize: 40,
+            fontSize: 36,
             fontFamily: 'Fredoka',
         },
         h4 : {
