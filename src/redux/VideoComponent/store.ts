@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { dataReducer, DataState } from "../data";
+import { dataReducer } from "../data";
 import { appReducer } from "./app";
 import subscriberMiddleware from "./middleware";
 

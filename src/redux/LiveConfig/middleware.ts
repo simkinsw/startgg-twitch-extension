@@ -1,48 +1,30 @@
 import { Dispatch, ListenerEffectAPI, PayloadAction, createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
-import { DataState, Sets, setSets, setStartGGEvent } from '../data';
+import { DataState, SetData, TransferState, setSets, setStartGGEvent } from '../data';
 
 import type { TypedStartListening } from '@reduxjs/toolkit'
 import type { RootState, AppDispatch } from './store'
-import { StateMessage } from '../../utils/message';
-import { StartGGEvent } from '../../types/StartGGEvent';
 
 const updateConfigStore = async (newState: DataState) => {
-    const config = { ...newState };
-
-    // Grab the top 100 sets based on the "order" field, populated at query time
-    config.sets = Object.fromEntries(Object.entries(config.sets).sort((a, b) => b[1].order - a[1].order).slice(0,100));
+    const config: TransferState = {
+        startGGEvent: newState.startGGEvent,
+        sets: newState.sets.ids
+            .slice(0,100)
+            .map((id) => newState.sets.entities[id])
+            .filter((set): set is SetData => set !== undefined),
+    }
 
     await import('../../utils/message').then(({ setConfig }) => {
         return setConfig(config);
     });
 }
 
-const send = async <T extends keyof DataState>(message: StateMessage<T>) => {
+const updatePubSub = async <T>(action: PayloadAction<T>) => {
     await import('../../utils/message').then(({ sendConfigUpdate }) => {
-        return sendConfigUpdate(message);
+        return sendConfigUpdate(action);
     });
 }
 
-const updatePubSub = async (action: any) => {
-    switch (action.type) {
-        case setSets.type:
-            const setAction = action as PayloadAction<Sets>;
-            await import('../../utils/message').then(({ createStateMessage }) => {
-                send(createStateMessage("sets", setAction.payload))
-            });
-            break;
-        case setStartGGEvent.type:
-            const eventAction = action as PayloadAction<StartGGEvent>;
-            await import('../../utils/message').then(({ createStateMessage }) => {
-                send(createStateMessage("startGGEvent", eventAction.payload))
-            });
-            break;
-        default:
-            console.log("unknown event");
-            break;
-    }
-}
-
+// Process any incoming data events
 const handleDispatch = async (action: any, listenerApi: ListenerEffectAPI<RootState, Dispatch>) => {
     // Update base config for new users
     await updateConfigStore(listenerApi.getState().data);

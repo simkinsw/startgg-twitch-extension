@@ -1,20 +1,11 @@
 import { Buffer } from 'buffer';
 import { gzip, inflate } from 'pako';
-import { DataState, initialData } from '../redux/data';
+import { DataActionObjects, TransferState } from '../redux/data';
+import { Dispatch, PayloadAction } from '@reduxjs/toolkit';
 
 const twitch = window.Twitch?.ext;
 
-export interface Message<T> { type: T }
-export interface StateMessage<F extends keyof DataState> extends Message<F> {
-    type: F,
-    data: DataState[F]
-}
-
-type MessageHandler<ParentType extends Record<string, any>> = {
-  [K in keyof ParentType]: (payload: ParentType[K]) => void;
-};
-export type StateMessageHandler = MessageHandler<DataState>;
-
+// Declared at this scope so they can be used during "unlisten" later
 let storageEventListener: { (event: StorageEvent): Promise<void>; (this: Window, ev: StorageEvent): any; (this: Window, ev: StorageEvent): any; };
 let pubsubEventListener: (_target: string, _contentType: string, body: string) => void;
 
@@ -22,19 +13,12 @@ let pubsubEventListener: (_target: string, _contentType: string, body: string) =
 /* SENDING DATA */
 /* ************ */
 
-export function createStateMessage<F extends keyof DataState>(type: F, input: DataState[F]): StateMessage<F> {
-    return {
-        type: type,
-        data: input
-    }
-}
-
 const compress = (input: object): string => {
     return Buffer.from(gzip(JSON.stringify(input)).buffer).toString('base64');
 }
 
 // Store complete state
-export const setConfig = (body: DataState) => {
+export const setConfig = (body: TransferState) => {
     const message: string = compress(body);
 
     if (twitch) {
@@ -47,8 +31,8 @@ export const setConfig = (body: DataState) => {
     }
 }
 
-// Send partial state (a top level field of DataState) to app
-export const sendConfigUpdate = <T extends keyof DataState>(body: StateMessage<T>) => {
+// Send an action to the user
+export const sendConfigUpdate = <T>(body: PayloadAction<T>) => {
 
     const message: string = compress(body);
 
@@ -72,10 +56,8 @@ const decompress = <T>(input: string): T => {
     return JSON.parse(inflate(Buffer.from(input, 'base64'), { to: 'string'}));
 }
 
-type ConfigHandler = (input: DataState) => void;
-
 // Store complete state
-export const getConfig = (handleConfig: ConfigHandler) => {
+export const getConfig = (handleConfig: (input: TransferState) => void) => {
 
     // Config from Twitch ConfigStore
     twitch.configuration.onChanged(() => {
@@ -94,46 +76,24 @@ export const getConfig = (handleConfig: ConfigHandler) => {
     }
 }
 
-const handleMessage = (handler: StateMessageHandler, message: Message<string>): void => {
-    if (!(message.type in initialData)) {
-        console.log(message.type, "not in initialData");
-        return
-    }
-    const stateMessageType = message.type as keyof DataState;
-    switch (stateMessageType) {
-        case "sets":
-            handler.sets((message as StateMessage<"sets">).data);
-            break;
-        case "startGGEvent":
-            handler.startGGEvent((message as StateMessage<"startGGEvent">).data);
-            break;
-        default:
-            const unreachable: never = stateMessageType;
-            break;
-    }
-}
-
-const localStorageEventHandler = (handler: StateMessageHandler) => async (event: StorageEvent) => {
-    if (event.storageArea === localStorage && event.key === "message" && event.newValue) {
-        if (event.newValue !== null) {
-            handleMessage(handler, decompress(event.newValue));
-        }
-    }
-}
-
-const pubsubEventHandler = (handler: StateMessageHandler) => (_target: string, _contentType: string, body: string) => {
-    handleMessage(handler, decompress(body));
-};
-
-export const listenConfigUpdate = (handleUpdate: StateMessageHandler) => {
+export const listenConfigUpdate = (handleUpdate: Dispatch<DataActionObjects>) => {
     if (process.env.NODE_ENV === "development") {
-        storageEventListener = localStorageEventHandler(handleUpdate);
+        storageEventListener = async (event: StorageEvent) => {
+            if (event.storageArea === localStorage && event.key === "message" && event.newValue) {
+                if (event.newValue !== null) {
+                    handleUpdate(decompress<DataActionObjects>(event.newValue));
+                }
+            }
+        };
+
         window.addEventListener('storage', storageEventListener);
         return;
     }
 
     if (twitch) {
-        pubsubEventListener = pubsubEventHandler(handleUpdate);
+        pubsubEventListener = (_target: string, _contentType: string, body: string) => {
+            handleUpdate(decompress<DataActionObjects>(body));
+        }
         twitch.listen("broadcast", pubsubEventListener);
     }
 }

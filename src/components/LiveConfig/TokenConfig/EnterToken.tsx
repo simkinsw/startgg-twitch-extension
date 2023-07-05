@@ -15,7 +15,7 @@ import StyledTooltip from "../StyledTooltip";
 import { useDispatch } from "react-redux";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { setApiToken } from "../../../redux/LiveConfig/app";
-import { useLoginMutation } from "../../../services/startgg";
+import { Startgg } from "../../../utils/startGG";
 
 const EnterToken = () => {
     const [token, setToken] = useState("");
@@ -27,8 +27,6 @@ const EnterToken = () => {
     const handleClickShowToken = () => setShowToken((show) => !show);
 
     const dispatch = useDispatch();
-
-    const [login, _result] = useLoginMutation();
 
     const handleTokenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setToken(event.target.value);
@@ -44,9 +42,8 @@ const EnterToken = () => {
         event.preventDefault();
         setLoading(true);
         try {
-
-            const valid = await login(token).unwrap();
-            if (valid) {
+            const isValid = await Startgg.validateToken(token);
+            if (isValid) {
                 dispatch(setApiToken({apiToken: token, store: storeToken}));
             } else {
                 setError("Invalid token");
