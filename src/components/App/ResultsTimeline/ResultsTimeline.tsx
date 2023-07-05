@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BeatLoader } from "react-spinners";
 import { defaultFilters } from "./filters";
 import SetBox from "../SetBox";
