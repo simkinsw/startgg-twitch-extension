@@ -1,5 +1,5 @@
 export type StartGGEvent = {
-    id: number,
+    id: string,
     event: string,
     tournament: string,
     entrantCount: number,
@@ -8,7 +8,7 @@ export type StartGGEvent = {
 }
 
 export const emptyStartGGEvent = {
-    id: -1,
+    id: "",
     event: "",
     tournament: "",
     entrantCount: 0,

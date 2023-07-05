@@ -1,51 +1,32 @@
 import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/VideoComponent/store";
 import { Box } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { BeatLoader } from "react-spinners";
 import { defaultFilters } from "./filters";
 import SetBox from "../SetBox";
 import FilterMenu from "../FilterMenu";
-import { BeatLoader } from "react-spinners";
-import { Sets, SetData } from "../../../redux/data";
+import { SetData, selectAllSets } from "../../../redux/data";
 
 //TODO: this is too much in one place
 const ResultsTimeline = () => {
-    const sets = useSelector((state: RootState) => state.data.sets);
-    const [prevSets, setPrevSets] = useState<Sets>([]);
-    const [setData, setSetData] = useState<SetData[]>([]);
+    const sets = useSelector(selectAllSets);
+    const [prevSets, setPrevSets] = useState<SetData[]>([]);
     const [filters, setFilters] = useState(defaultFilters);
+
     const [loadingSets, setLoadingSets] = useState(false);
 
-    const phases = Array.from(new Set(Object.entries(sets).map(set => set[1].phaseName)));
-    useEffect(() => {
-        let tempSets = Object.entries(sets)
-            .map((set) => set[1])
-            .reverse()
-            .slice();
-        if (filters.upset) {
-            tempSets = tempSets.filter(
-                (set) => set.winnerSeed > set.loserSeed
-            );
-        }
-        if (filters.seeded) {
-            //TODO: what's the cutoff for seeding?
-            tempSets = tempSets.filter(
-                (set) => set.winnerSeed <= 16 || set.loserSeed <= 16
-            );
-        }
-        if (filters.phase !== "All Phases") {
-            tempSets = tempSets.filter(
-                (set) => set.phaseName === filters.phase
-            );
-        }
-        if (filters.search) {
-            tempSets = tempSets.filter(
-                (set) => set.winnerName.toLowerCase().includes(filters.search) 
-                        || set.loserName.toLowerCase().includes(filters.search)
-            );
-        }
-        setSetData(tempSets.sort((a,b) => b.order - a.order));
-    }, [sets, filters])
+    const phases = useMemo(() => {
+        return Array.from(new Set(sets.map((set) => set.phaseName)));
+    }, [sets]);
+
+    const setData = useMemo(() => {
+        return sets.filter((set) => {
+            return (!filters.upset || set.winnerSeed > set.loserSeed) &&
+            (!filters.seeded || set.winnerSeed <= 16 || set.loserSeed <= 16) && 
+            (filters.phase === "All Phases" || set.phaseName === filters.phase) &&
+            (!filters.search || set.winnerName.toLowerCase().includes(filters.search) || set.loserName.toLowerCase().includes(filters.search))
+        })
+    }, [sets, filters]);
 
     useEffect(() => {
         if (Object.entries(prevSets).length === 0 || Object.entries(prevSets).length === Object.entries(sets).length) {

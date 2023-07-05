@@ -26,10 +26,10 @@ const EventConfig: React.FC = () => {
                 dispatch(setLastUpdate(0));
                 dispatch(setStartGGEvent(ggEvent));
             } else {
-                setError("Invalid URL");
+                setError("Failed to find event");
             }
         } catch (error) {
-            setError("Invalid URL");
+            setError("Error while fetching event");
         }
         setUrl("");
         setLoading(false);
