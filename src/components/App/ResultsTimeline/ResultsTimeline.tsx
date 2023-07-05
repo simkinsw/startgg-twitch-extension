@@ -42,7 +42,7 @@ const ResultsTimeline = () => {
     return (
         <Box sx={{ overflow: "auto" }}>
             <FilterMenu phases={phases} filters={filters} setFilters={setFilters} />
-            {isPending && 
+            {loadingSets && 
                 <Box
                     sx={{
                         display: "flex",
