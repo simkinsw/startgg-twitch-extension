@@ -2,6 +2,7 @@ import { Box, Typography } from "@mui/material";
 import TokenConfig from "./TokenConfig";
 import ConfigCard from "./ConfigCard";
 import EventConfig from "./EventConfig";
+import Admin from "./Admin";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/LiveConfig/store";
 import { StartGGEvent } from "../../types/StartGGEvent";
@@ -42,6 +43,13 @@ const LiveConfig: React.FC = () => {
                 <ConfigCard heading="Select Event" completed={!!event.event}>
                     <EventConfig />
                 </ConfigCard>
+                {process.env.NODE_ENV === "development"
+                    ?
+                    <ConfigCard heading="Admin" completed={true}>
+                        <Admin/>
+                    </ConfigCard>
+                    :
+                    null}
             </Box>
         </Box>
     );

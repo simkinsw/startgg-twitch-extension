@@ -45,7 +45,7 @@ const VideoComponent = () => {
                 <Typography variant="h3" fontFamily="Lato" fontWeight={400}>
                     What would you like to see here?
                     <br/><br/>
-                    If you have any suggestions message @simkins on discord. All feedback is greatly appreciated!
+                    If you have any suggestions, message @simkins on discord. All feedback is greatly appreciated!
                 </Typography>
             </TabPanel>
         </Box>
