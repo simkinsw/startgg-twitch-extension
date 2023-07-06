@@ -20,9 +20,9 @@ export const TabPanel = (props: TabPanelProps) => {
         >
             {value === index && (
                 <Box
+                    id="scroll-container"
                     sx={{
                         p: 3,
-                        transform: "translateY(31rem)",
                         maxHeight: "107rem",
                         overflowY: "scroll",
                         scrollbarWidth: "thin"
