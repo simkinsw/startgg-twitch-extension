@@ -143,6 +143,7 @@ export class Startgg {
                                 }
                             }
                         }
+                        round
                         phaseGroup {
                             phase {
                                 name
@@ -201,6 +202,15 @@ const convertSet = (set: SetType): SetData => {
         winner = 1;
         loser = 0;
     }
+
+    // Build a number to sort sets
+    // (phase) + (3 digits round) + (12 digits seconds since epoch)
+    // ex. (4)(012)(001234567890)
+    // round logic follow below ordering pattern:
+    // 1/-3 < -4 < 2/-5 < -6 < 3/-7 < -8 < 4/-9 < -10 < 5...
+    const sortPhaseOrder = set.phaseGroup.phase.phaseOrder * 1e15;
+    const sortRound = (set.round > 0 ? set.round : ((set.round + 1) / -2)) * 1e12;
+    const sortOrder = sortPhaseOrder + sortRound + set.completedAt;
     
     return {
         id: set.id,
@@ -213,8 +223,7 @@ const convertSet = (set: SetType): SetData => {
         roundName: set.fullRoundText,
         phaseName: set.phaseGroup.phase.name,
         url: set.phaseGroup.bracketUrl,
-        // Somewhat hacky but cheap ordering
-        order: set.phaseGroup.phase.phaseOrder * set.completedAt,
+        order: sortOrder,
     }
 }
 
