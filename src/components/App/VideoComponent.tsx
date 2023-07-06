@@ -6,8 +6,6 @@ import { useState } from "react";
 import { FaGamepad } from "react-icons/fa";
 import { BsQuestionLg } from "react-icons/bs";
 
-
-
 const VideoComponent = () => {
     const [value, setValue] = useState(0);
 
@@ -16,8 +14,21 @@ const VideoComponent = () => {
     };
 
     return (
-        <Box sx={{ width: "100%", height: "1152px", bgcolor: "background.default" }}>
-            <Box bgcolor="primary.main" sx={{ boxShadow: 5, position: "fixed", width: "1024px", zIndex: 100  }}>
+        <Box
+            sx={{
+                width: "100%",
+                height: "1152px",
+                bgcolor: "background.default",
+            }}
+        >
+            <Box
+                bgcolor="primary.main"
+                sx={{
+                    boxShadow: 5,
+                    width: "1024px",
+                    zIndex: 100,
+                }}
+            >
                 <TournamentBanner />
                 <Box sx={{ paddingTop: "2rem" }}>
                     <StyledTabs
@@ -25,9 +36,24 @@ const VideoComponent = () => {
                         onChange={handleChange}
                         aria-label="StartGG Overlay Tabs"
                     >
-                        <StyledTab icon={<FaGamepad />} iconPosition="start" label="Results" {...a11yProps(0)} />
-                        <StyledTab icon={<BsQuestionLg />} iconPosition="start" label="Coming" {...a11yProps(1)} />
-                        <StyledTab icon={<BsQuestionLg />} iconPosition="start" label="Soon" {...a11yProps(2)} />
+                        <StyledTab
+                            icon={<FaGamepad />}
+                            iconPosition="start"
+                            label="Results"
+                            {...a11yProps(0)}
+                        />
+                        <StyledTab
+                            icon={<BsQuestionLg />}
+                            iconPosition="start"
+                            label="Coming"
+                            {...a11yProps(1)}
+                        />
+                        <StyledTab
+                            icon={<BsQuestionLg />}
+                            iconPosition="start"
+                            label="Soon"
+                            {...a11yProps(2)}
+                        />
                     </StyledTabs>
                 </Box>
             </Box>
@@ -37,15 +63,19 @@ const VideoComponent = () => {
             <TabPanel value={value} index={1}>
                 <Typography variant="h3" fontFamily="Lato" fontWeight={400}>
                     What would you like to see here?
-                    <br/><br/>
-                    If you have any suggestions, message @simkins on discord. All feedback is greatly appreciated!
+                    <br />
+                    <br />
+                    If you have any suggestions, message @simkins on discord.
+                    All feedback is greatly appreciated!
                 </Typography>
             </TabPanel>
             <TabPanel value={value} index={2}>
                 <Typography variant="h3" fontFamily="Lato" fontWeight={400}>
                     What would you like to see here?
-                    <br/><br/>
-                    If you have any suggestions, message @simkins on discord. All feedback is greatly appreciated!
+                    <br />
+                    <br />
+                    If you have any suggestions, message @simkins on discord.
+                    All feedback is greatly appreciated!
                 </Typography>
             </TabPanel>
         </Box>
@@ -54,8 +84,8 @@ const VideoComponent = () => {
 
 function a11yProps(index: number) {
     return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
+        id: `simple-tab-${index}`,
+        "aria-controls": `simple-tabpanel-${index}`,
     };
 }
 
