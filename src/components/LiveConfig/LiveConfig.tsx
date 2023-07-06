@@ -32,7 +32,7 @@ const LiveConfig: React.FC = () => {
                 }}
             >
                 <Box>
-                    <Typography variant="h5">Configuring %AppName%</Typography>
+                    <Typography variant="h5">Configuring QuickStartGG</Typography>
                     <Typography variant="subtitle1">
                         {completedTasks} of 2 tasks completed
                     </Typography>

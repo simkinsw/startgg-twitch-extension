@@ -57,7 +57,7 @@ const EnterToken = () => {
     return (
         <Box sx={{ height: "24rem", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <Typography>
-                You need a start.gg API token to use %AppName%.
+                You need a start.gg API token to use QuickStartGG.
                 <br />
                 You can generate one{" "}
                 <a
