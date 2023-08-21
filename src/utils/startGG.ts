@@ -161,7 +161,7 @@ export class Startgg {
             var page = 1;
             var pages = 0;
             do {
-                if (pages == 0) {
+                if (pages === 0) {
                     console.log(`Refreshing data`);
                 } else {
                     console.log(`Getting page ${page}/${pages}`);

@@ -25,7 +25,16 @@ const useStartGG = (refreshIntervalMs: number) => {
             const queryTime = Math.floor(Date.now() / 1000) - 120;
             const results: SetData[] = await Startgg.getSets(apiToken, eventId, store.getState().app.lastUpdate);
             if (results.length > 0) {
-                dispatch(setSets(results));
+                const batchSize = 100;
+                const delayMs = 1000;
+                let i = 0;
+                while (i < results.length) {
+                    const batch: SetData[] = results.slice(i, i + batchSize);
+                    dispatch(setSets(batch));
+                    i += batchSize;
+                    await new Promise(resolve => setTimeout(resolve, delayMs));
+                }
+
                 dispatch(setLastUpdate(queryTime));
             }
 
