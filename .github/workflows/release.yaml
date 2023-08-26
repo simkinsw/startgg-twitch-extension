@@ -1,0 +1,37 @@
+name: Create release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        description: Version of generated release
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - run: |
+          cd dist
+          zip -r extension.zip *
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/extension.zip
+          fail_on_unmatched_files: true
+          generate_release_notes: true
+          tag_name: ${{ inputs.version }}
