@@ -3,7 +3,7 @@ import { subscribe, unsubscribe } from './app';
 
 import type { Dispatch, ListenerEffectAPI, TypedStartListening } from '@reduxjs/toolkit'
 import type { RootState, AppDispatch } from './store'
-import { setSets, setStartGGEvent } from '../data';
+import { TransferState, setSets, setStartGGEvent } from '../data';
 
 const handleConfig = (listenerApi: ListenerEffectAPI<RootState, Dispatch>) => (config: TransferState)  => {
     listenerApi.dispatch(setStartGGEvent(config.startGGEvent));
