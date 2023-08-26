@@ -36,6 +36,9 @@ const LiveConfig: React.FC = () => {
                     <Typography variant="subtitle1">
                         {completedTasks} of 2 tasks completed
                     </Typography>
+                    <Typography variant="subtitle1">
+                        NOTE: KEEP THIS WINDOW OPEN
+                    </Typography>
                 </Box>
                 <ConfigCard heading="Set API Token" completed={!!token}>
                     <TokenConfig />
