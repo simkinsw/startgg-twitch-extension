@@ -3,20 +3,13 @@ import { subscribe, unsubscribe } from './app';
 
 import type { Dispatch, ListenerEffectAPI, TypedStartListening } from '@reduxjs/toolkit'
 import type { RootState, AppDispatch } from './store'
-import { TransferState, setSets, setStartGGEvent } from '../data';
-
-const handleConfig = (listenerApi: ListenerEffectAPI<RootState, Dispatch>) => (config: TransferState)  => {
-    listenerApi.dispatch(setStartGGEvent(config.startGGEvent));
-    listenerApi.dispatch(setSets(config.sets));
-}
 
 export const handleSubscribe = async (_: any, listenerApi: ListenerEffectAPI<RootState, Dispatch>) => {
 
     // Load initial config
     await import('../../utils/message')
-        .then(({ listenConfigUpdate, getConfig }) => {
+        .then(({ listenConfigUpdate }) => {
             // Get inital config
-            getConfig(handleConfig(listenerApi));
             listenConfigUpdate(listenerApi.dispatch);
         });
 }
