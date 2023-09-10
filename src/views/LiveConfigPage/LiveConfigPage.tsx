@@ -4,14 +4,14 @@ import LiveConfig from "../../components/LiveConfig";
 import { darkTheme } from "../../mui-theme";
 import useStartGG from "../../hooks/useStartGG";
 
-const LiveConfigPage = () => {
-    useStartGG(30000);
+const LiveConfigPage: React.FC = () => {
+  useStartGG(30000);
 
-    return (
-        <ThemeProvider theme={darkTheme}>
-            <LiveConfig />
-        </ThemeProvider>
-    );
+  return (
+    <ThemeProvider theme={darkTheme}>
+      <LiveConfig />
+    </ThemeProvider>
+  );
 };
 
 export default LiveConfigPage;

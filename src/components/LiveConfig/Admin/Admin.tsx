@@ -1,14 +1,18 @@
-import {
-    Box,
-} from "@mui/material";
+import { Box } from "@mui/material";
 import SetDataForm from "./SetDataForm";
 
-const Admin = () => {
-    return (
-        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-            <SetDataForm/>
-        </Box>
-    );
+const Admin: React.FC = () => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
+    >
+      <SetDataForm />
+    </Box>
+  );
 };
 
 export default Admin;

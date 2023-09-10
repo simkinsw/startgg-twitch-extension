@@ -1,4 +1,4 @@
-import type { CodegenConfig } from '@graphql-codegen/cli';
+import type { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
   overwrite: true,
@@ -8,10 +8,10 @@ const config: CodegenConfig = {
     "src/services/gql/types-and-hooks.tsx": {
       plugins: ["typescript", "typescript-operations"],
       config: {
-        avoidOptionals: true
-      }
+        avoidOptionals: true,
+      },
     },
-  }
+  },
 };
 
 export default config;

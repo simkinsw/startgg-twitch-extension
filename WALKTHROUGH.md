@@ -28,6 +28,7 @@ Step 3: Start a stream
 Step 4: Open the live config panel. The first box is the same as the offline config. If you clicked "Remember Me" in step 2, it should already be complete. Otherwise repeat step 2 here.
 
 Step 5: "Select Event". This box is for configuring which StartGG event is being streamed. Here are two events that we use for testing.
+
 - https://www.start.gg/tournament/midlane-melee-73-1/event/melee-singles
 - https://www.start.gg/tournament/wisdom-melee/event/melee-singles
 
@@ -37,6 +38,5 @@ Step 6: Open the stream from the viewer's perspective. The extension should be p
 Step 7: Try out the filters on the Results tab. You can pick different phases, search for specific player, or filter by upsets/top seeds
 
 Step 8: On the live config panel, put in a different event. Verify that the viewer's panel changes
-
 
 Please reach out to me at any time at patrick.dougherty.0208@gmail.com for details or to turn on my channel.
