@@ -1,9 +1,9 @@
 import { TextField, Button, Box } from "@mui/material";
 import type React from "react";
 import { useState } from "react";
-import { theme } from "../../../mui-theme";
 import { useDispatch } from "react-redux";
 import { setSets } from "../../../redux/data";
+import { useTheme } from "@mui/material/styles";
 
 const emptySetData = {
   id: "",
@@ -21,6 +21,7 @@ const emptySetData = {
 
 const SetDataForm: React.FC = () => {
   const [formData, setFormData] = useState(emptySetData);
+  const theme = useTheme();
 
   const dispatch = useDispatch();
 

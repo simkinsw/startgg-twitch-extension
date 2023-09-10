@@ -11,12 +11,13 @@ import type React from "react";
 import { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { theme } from "../../../mui-theme";
 import { setApiToken } from "../../../redux/LiveConfig/app";
 import { type RootState } from "../../../redux/LiveConfig/store";
+import { useTheme } from "@mui/material/styles";
 
 const ResetToken: React.FC = () => {
   const [showToken, setShowToken] = useState(false);
+  const theme = useTheme();
 
   const dispatch = useDispatch();
   const token = useSelector((state: RootState) => state.app.apiToken);

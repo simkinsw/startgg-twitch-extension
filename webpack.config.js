@@ -39,17 +39,15 @@ module.exports = (_env, argv) => {
       entry[name] = entryPoints[name].path;
 
       // Prod-specific configs
-      if (argv.mode === "production") {
-        plugins.push(
-          new HtmlWebpackPlugin({
-            inject: true,
-            chunks: [name],
-            template: "./template.html",
-            filename: entryPoints[name].outputHtml,
-            title: entryPoints[name].title,
-          }),
-        );
-      }
+      plugins.push(
+        new HtmlWebpackPlugin({
+          inject: true,
+          chunks: [name],
+          template: "./template.html",
+          filename: entryPoints[name].outputHtml,
+          title: entryPoints[name].title,
+        }),
+      );
 
       // Dev-specific configs
       if (argv.mode === "development") {

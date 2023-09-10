@@ -10,13 +10,13 @@ import {
 } from "@mui/material";
 import type React from "react";
 import { useState } from "react";
-import { theme } from "../../../mui-theme";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import StyledTooltip from "../StyledTooltip";
 import { useDispatch } from "react-redux";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { setApiToken } from "../../../redux/LiveConfig/app";
 import { validateToken } from "../../../utils/startGG";
+import { useTheme } from "@mui/material/styles";
 
 const EnterToken: React.FC = () => {
   const [token, setToken] = useState("");
@@ -24,6 +24,7 @@ const EnterToken: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showToken, setShowToken] = useState(false);
+  const theme = useTheme();
 
   const handleClickShowToken = (): void => {
     setShowToken((show) => !show);

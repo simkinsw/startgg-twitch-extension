@@ -2,10 +2,10 @@ import { ThemeProvider } from "@mui/material";
 import { useEffect, useState } from "react";
 
 import VideoComponent from "../../components/App/VideoComponent";
-import { theme as muiTheme } from "../../mui-theme";
 import useTwitchData from "../../hooks/useTwitchData";
 import { useDispatch } from "react-redux";
 import { type TransferState, setSets, setStartGGEvent } from "../../redux/data";
+import useTwitchTheme from "../../hooks/useTwitchTheme";
 
 declare global {
   interface Window {
@@ -16,6 +16,7 @@ declare global {
 const App: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
   const twitch = window.Twitch?.ext;
+  const theme = useTwitchTheme();
 
   const dispatch = useDispatch();
 
@@ -54,7 +55,7 @@ const App: React.FC = () => {
   useTwitchData();
 
   return isVisible ? (
-    <ThemeProvider theme={muiTheme}>
+    <ThemeProvider theme={theme}>
       <div style={{ maxWidth: "1024px", maxHeight: "1152px" }}>
         <VideoComponent />
       </div>

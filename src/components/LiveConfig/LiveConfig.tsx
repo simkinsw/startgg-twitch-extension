@@ -43,12 +43,15 @@ const LiveConfig: React.FC = () => {
             NOTE: KEEP THIS WINDOW OPEN
           </Typography>
         </Box>
+
         <ConfigCard heading="Set API Token" completed={token !== ""}>
           <TokenConfig />
         </ConfigCard>
+
         <ConfigCard heading="Select Event" completed={event.event !== ""}>
           <EventConfig />
         </ConfigCard>
+
         {process.env.NODE_ENV === "development" ? (
           <ConfigCard heading="Admin" completed={true}>
             <Admin />

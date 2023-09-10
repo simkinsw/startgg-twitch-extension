@@ -1,10 +1,12 @@
 import { ThemeProvider } from "@mui/material";
-import { theme as muiTheme } from "../../mui-theme";
 import Config from "../../components/Config";
+import useTwitchTheme from "../../hooks/useTwitchTheme";
 
 const ConfigPage: React.FC = () => {
+  const theme = useTwitchTheme();
+
   return (
-    <ThemeProvider theme={muiTheme}>
+    <ThemeProvider theme={theme}>
       <Config />
     </ThemeProvider>
   );
