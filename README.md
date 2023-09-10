@@ -29,6 +29,7 @@ the viewer's component view.
 ### Live Config View
 
 The live config view powers the extension. It is responsible for:
+
 - Loading all available data from StartGG on startup
 - Storing a filtered and compressed version of the data in the Configuration Service
 - Polling StartGG for updates

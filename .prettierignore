@@ -1,0 +1,15 @@
+# dependencies
+/node_modules
+
+# production
+/build
+/dist
+
+# vscode
+.vscode
+
+# webpack
+stats.json
+
+# generated code
+src/services/gql/types-and-hooks.tsx

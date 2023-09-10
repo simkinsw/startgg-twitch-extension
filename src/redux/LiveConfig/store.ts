@@ -4,12 +4,12 @@ import { dataReducer } from "../data";
 import listenerMiddleware from "./middleware";
 
 export const store = configureStore({
-    reducer: {
-        app: appReducer,
-        data: dataReducer,
-    },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware()
-        .prepend(listenerMiddleware.middleware)
+  reducer: {
+    app: appReducer,
+    data: dataReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().prepend(listenerMiddleware.middleware),
 });
 
 export type AppDispatch = typeof store.dispatch;

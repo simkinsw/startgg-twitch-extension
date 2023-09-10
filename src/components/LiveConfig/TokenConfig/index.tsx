@@ -1,3 +1,3 @@
 import TokenConfig from "./TokenConfig";
 
-export default TokenConfig
+export default TokenConfig;
