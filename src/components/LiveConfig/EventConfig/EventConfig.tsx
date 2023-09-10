@@ -1,5 +1,4 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
-import { theme } from "../../../mui-theme";
 import { useState } from "react";
 import { getEvent } from "../../../utils/startGG";
 import { type StartGGEvent } from "../../../types/StartGGEvent";
@@ -7,12 +6,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { setStartGGEvent } from "../../../redux/data";
 import { setLastUpdate } from "../../../redux/LiveConfig/app";
 import { type RootState } from "../../../redux/LiveConfig/store";
+import { useTheme } from "@mui/material/styles";
 
 const EventConfig: React.FC = () => {
   const [url, setUrl] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const theme = useTheme();
 
   const token = useSelector((state: RootState) => state.app.apiToken);
   const event: StartGGEvent = useSelector(

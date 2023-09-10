@@ -12,11 +12,11 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ClearIcon from "@mui/icons-material/Clear";
 import { type Filters } from "../ResultsTimeline/filters";
 import { useState } from "react";
+import { useTheme } from "@mui/material/styles";
 import {
   MdOutlineCheckBox,
   MdOutlineCheckBoxOutlineBlank,
 } from "react-icons/md";
-import { theme } from "../../../mui-theme";
 
 // TODO: this might need to get broken up...
 
@@ -34,6 +34,7 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [searchValue, setSearchValue] = useState("");
+  const theme = useTheme();
 
   const handleSearchChange = (event: any): void => {
     setSearchValue(event.target.value);
