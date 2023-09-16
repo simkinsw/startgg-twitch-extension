@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { type SetData, setSets } from "../redux/data";
 import { type RootState, store } from "../redux/LiveConfig/store";
 import { setLastUpdate } from "../redux/LiveConfig/app";
-import { getSets } from "../utils/startGG";
+import { getSets } from "@services/StartGG";
 
 const useStartGG = (refreshIntervalMs: number): void => {
   const dispatch = useDispatch();

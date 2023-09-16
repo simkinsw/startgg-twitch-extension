@@ -1,4 +1,4 @@
 declare module "*.png" {
-  const value: HTMLImageElement;
+  const value: string;
   export = value;
 }

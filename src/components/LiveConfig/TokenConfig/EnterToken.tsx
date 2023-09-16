@@ -15,7 +15,7 @@ import StyledTooltip from "../StyledTooltip";
 import { useDispatch } from "react-redux";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { setApiToken } from "../../../redux/LiveConfig/app";
-import { validateToken } from "../../../utils/startGG";
+import { validateToken } from "@services/StartGG";
 import { useTheme } from "@mui/material/styles";
 
 const EnterToken: React.FC = () => {
@@ -46,7 +46,7 @@ const EnterToken: React.FC = () => {
 
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
-  ): void => {
+  ): Promise<void> => {
     event.preventDefault();
     setLoading(true);
     try {
@@ -93,7 +93,7 @@ const EnterToken: React.FC = () => {
           marginBottom: theme.spacing(5),
           height: "4.8rem",
         }}
-        onSubmit={handleSubmit}
+        onSubmit={() => handleSubmit}
       >
         <TextField
           id="token-input"
