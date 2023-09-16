@@ -5,7 +5,7 @@ import EventConfig from "./EventConfig";
 import Admin from "./Admin";
 import { useSelector } from "react-redux";
 import { type RootState } from "../../redux/LiveConfig/store";
-import { type StartGGEvent } from "../../types/StartGGEvent";
+import { type StartGGEvent } from "@services/StartGG";
 
 const LiveConfig: React.FC = () => {
   const token = useSelector((state: RootState) => state.app.apiToken);

@@ -82,7 +82,12 @@ module.exports = (_env, argv) => {
         },
       ],
     },
-    resolve: { extensions: ["*", ".js", ".jsx", ".ts", ".tsx"] },
+    resolve: {
+      alias: {
+        "@services": path.resolve(__dirname, 'src/services')
+      },
+      extensions: ["*", ".js", ".jsx", ".ts", ".tsx"]
+    },
     output: {
       filename: "[name].bundle.js",
       path: bundlePath,

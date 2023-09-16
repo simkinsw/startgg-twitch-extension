@@ -12,4 +12,4 @@
 stats.json
 
 # generated code
-src/services/gql/types-and-hooks.tsx
+src/services/StartGG/gql/types-and-hooks.tsx

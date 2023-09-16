@@ -1,4 +1,4 @@
-import { type SetData } from "../redux/data";
+import { type SetData } from "../../redux/data";
 import {
   type CurrentUserQuery,
   type CurrentUserQueryVariables,
@@ -6,8 +6,7 @@ import {
   type GetEventQueryVariables,
   type GetSetsQuery,
   type GetSetsQueryVariables,
-} from "../services/gql/types-and-hooks";
-import { type StartGGEvent } from "../types/StartGGEvent";
+} from "./gql/types-and-hooks";
 import { gql } from "graphql-request";
 
 interface Query<T> {
@@ -17,6 +16,15 @@ interface Query<T> {
 
 interface Data<T> {
   data: T;
+}
+
+export interface StartGGEvent {
+  id: string;
+  event: string;
+  tournament: string;
+  entrantCount: number;
+  imageUrl: string;
+  startggUrl: string;
 }
 
 const api = "https://api.start.gg/gql/alpha";

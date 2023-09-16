@@ -1,7 +1,6 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useState } from "react";
-import { getEvent } from "../../../utils/startGG";
-import { type StartGGEvent } from "../../../types/StartGGEvent";
+import { type StartGGEvent, getEvent } from "@services/StartGG";
 import { useDispatch, useSelector } from "react-redux";
 import { setStartGGEvent } from "../../../redux/data";
 import { setLastUpdate } from "../../../redux/LiveConfig/app";

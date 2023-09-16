@@ -3,7 +3,7 @@ import {
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import { emptyStartGGEvent, type StartGGEvent } from "../types/StartGGEvent";
+import { type StartGGEvent } from "@services/StartGG";
 import { type RootState } from "./VideoComponent/store";
 
 // Data (startgg set data)
@@ -31,6 +31,15 @@ export interface DataState {
   startGGEvent: StartGGEvent;
   sets: ReturnType<typeof setAdapter.getInitialState>;
 }
+
+const emptyStartGGEvent = {
+  id: "",
+  event: "",
+  tournament: "",
+  entrantCount: 0,
+  imageUrl: "",
+  startggUrl: "",
+};
 
 export const initialData: DataState = {
   startGGEvent: emptyStartGGEvent,

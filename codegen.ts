@@ -2,10 +2,10 @@ import type { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: "src/services/gql/schema.graphql",
-  documents: "src/utils/startGG.ts",
+  schema: "src/services/StartGG/gql/schema.graphql",
+  documents: "src/services/StartGG/startGG.ts",
   generates: {
-    "src/services/gql/types-and-hooks.tsx": {
+    "src/services/StartGG/gql/types-and-hooks.tsx": {
       plugins: ["typescript", "typescript-operations"],
       config: {
         avoidOptionals: true,
