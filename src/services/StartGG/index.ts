@@ -8,6 +8,7 @@ import {
   type GetSetsQueryVariables,
 } from "./gql/types-and-hooks";
 import { gql } from "graphql-request";
+export { default as useStartGG } from "./useStartGG";
 
 interface Query<T> {
   query: string;

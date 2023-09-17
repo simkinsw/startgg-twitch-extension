@@ -1,8 +1,7 @@
 import { ThemeProvider } from "@mui/material";
 
 import VideoComponent from "../../components/App/VideoComponent";
-import useTwitchData from "../../hooks/useTwitchData";
-import useTwitchTheme from "../../hooks/useTwitchTheme";
+import { useTwitchData, useTwitchTheme } from "@services/Twitch";
 
 const App: React.FC = () => {
   const theme = useTwitchTheme();

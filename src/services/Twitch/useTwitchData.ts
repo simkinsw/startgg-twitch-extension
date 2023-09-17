@@ -5,7 +5,7 @@ import {
   type TransferState,
   setSets,
   setStartGGEvent,
-} from "../redux/data";
+} from "../../redux/data";
 
 const twitch = window.Twitch?.ext;
 
@@ -31,7 +31,7 @@ const useTwitchData = (): void => {
 
   const handleConfig = async (compressedConfig: string): Promise<void> => {
     try {
-      await import("../utils/compression").then(({ decompress }) => {
+      await import("../../utils/compression").then(({ decompress }) => {
         const config: TransferState = decompress(compressedConfig);
         dispatch(setStartGGEvent(config.startGGEvent));
         dispatch(setSets(config.sets));
@@ -44,7 +44,7 @@ const useTwitchData = (): void => {
   const storageEventListener = async (event: StorageEvent): Promise<void> => {
     if (event.storageArea === localStorage && event.key === "message") {
       try {
-        await import("../utils/compression").then(({ decompress }) => {
+        await import("../../utils/compression").then(({ decompress }) => {
           if (event.newValue !== null) {
             dispatch(decompress<DataActionObjects>(event.newValue));
           }
@@ -61,7 +61,7 @@ const useTwitchData = (): void => {
     body: string,
   ): Promise<void> => {
     try {
-      await import("../utils/compression").then(({ decompress }) => {
+      await import("../../utils/compression").then(({ decompress }) => {
         dispatch(decompress<DataActionObjects>(body));
       });
     } catch (error) {

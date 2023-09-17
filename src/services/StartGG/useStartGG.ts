@@ -1,16 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 
-import { type SetData, setSets } from "../redux/data";
-import { type RootState, store } from "../redux/LiveConfig/store";
-import { setLastUpdate } from "../redux/LiveConfig/app";
+import { type SetData, setSets } from "../../redux/data";
+import { type RootState, store } from "../../redux/LiveConfig/store";
+import { setLastUpdate } from "../../redux/LiveConfig/app";
 import { getSets } from "@services/StartGG";
 
 const useStartGG = (refreshIntervalMs: number): void => {
   const dispatch = useDispatch();
 
   const apiToken = useSelector((state: RootState) => state.app.apiToken);
-  const eventId = useSelector((state: RootState) => state.data.startGGEvent?.id);
+  const eventId = useSelector(
+    (state: RootState) => state.data.startGGEvent?.id,
+  );
 
   let timeoutId: ReturnType<typeof setTimeout>;
 

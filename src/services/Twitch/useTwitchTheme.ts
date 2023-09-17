@@ -1,5 +1,5 @@
 import { type Theme } from "@mui/material";
-import { darkTheme, lightTheme } from "../mui-theme";
+import { darkTheme, lightTheme } from "../../mui-theme";
 import { useEffect, useState } from "react";
 
 const twitch = window.Twitch?.ext;
