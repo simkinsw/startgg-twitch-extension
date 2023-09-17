@@ -10,12 +10,12 @@ const useStartGG = (refreshIntervalMs: number): void => {
   const dispatch = useDispatch();
 
   const apiToken = useSelector((state: RootState) => state.app.apiToken);
-  const eventId = useSelector((state: RootState) => state.data.startGGEvent.id);
+  const eventId = useSelector((state: RootState) => state.data.startGGEvent?.id);
 
   let timeoutId: ReturnType<typeof setTimeout>;
 
   useEffect(() => {
-    if (eventId === "" || apiToken === "") {
+    if (eventId === undefined || apiToken === "") {
       // Missing required inputs
       return;
     }
