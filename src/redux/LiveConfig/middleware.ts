@@ -15,8 +15,14 @@ import {
 } from "../data";
 
 import type { RootState, AppDispatch } from "./store";
+const twitch = window.Twitch?.ext;
 
 const updateConfigStore = async (newState: DataState): Promise<void> => {
+  if (newState.startGGEvent === undefined) {
+    console.log("Skipping updating config store due to empty event");
+    return;
+  }
+
   const config: TransferState = {
     startGGEvent: newState.startGGEvent,
     sets: newState.sets.ids
@@ -25,14 +31,31 @@ const updateConfigStore = async (newState: DataState): Promise<void> => {
       .filter((set): set is SetData => set !== undefined),
   };
 
-  await import("../../utils/message").then(({ setConfig }) => {
-    setConfig(config);
+  await import("../../utils/compression").then(({ compress }) => {
+    const message: string = compress(config);
+
+    if (process.env.NODE_ENV === "development") {
+      // Use localStorage as a message bus
+      localStorage.removeItem("store");
+      localStorage.setItem("store", message);
+    } else if (twitch !== undefined) {
+      twitch.configuration.set("broadcaster", "1", message);
+    }
   });
 };
 
 const updatePubSub = async <T>(action: PayloadAction<T>): Promise<void> => {
-  await import("../../utils/message").then(({ sendConfigUpdate }) => {
-    sendConfigUpdate(action);
+  await import("../../utils/compression").then(({ compress }) => {
+    const message: string = compress(action);
+
+    if (process.env.NODE_ENV === "development") {
+      // Use localStorage as a message bus
+      // Force it to reprocess every time
+      localStorage.removeItem("message");
+      localStorage.setItem("message", message);
+    } else if (twitch !== undefined) {
+      twitch.send("broadcast", "text/plain", message);
+    }
   });
 };
 

@@ -28,21 +28,12 @@ export const setAdapter = createEntityAdapter<SetData>({
 });
 
 export interface DataState {
-  startGGEvent: StartGGEvent;
+  startGGEvent: StartGGEvent | undefined;
   sets: ReturnType<typeof setAdapter.getInitialState>;
 }
 
-const emptyStartGGEvent = {
-  id: "",
-  event: "",
-  tournament: "",
-  entrantCount: 0,
-  imageUrl: "",
-  startggUrl: "",
-};
-
 export const initialData: DataState = {
-  startGGEvent: emptyStartGGEvent,
+  startGGEvent: undefined,
   sets: setAdapter.getInitialState(),
 };
 
@@ -62,7 +53,10 @@ const dataSlice = createSlice({
       setAdapter.setMany(state.sets, action.payload);
     },
     setStartGGEvent(state, action: PayloadAction<StartGGEvent>) {
-      if (state.startGGEvent.id !== action.payload.id) {
+      if (
+        state.startGGEvent === undefined ||
+        state.startGGEvent.id !== action.payload.id
+      ) {
         setAdapter.removeAll(state.sets);
       }
       state.startGGEvent = action.payload;
