@@ -15,7 +15,7 @@ const EventConfig: React.FC = () => {
   const theme = useTheme();
 
   const token = useSelector((state: RootState) => state.app.apiToken);
-  const event: StartGGEvent = useSelector(
+  const event: StartGGEvent | undefined = useSelector(
     (state: RootState) => state.data.startGGEvent,
   );
 
@@ -54,7 +54,7 @@ const EventConfig: React.FC = () => {
         justifyContent: "space-between",
       }}
     >
-      {event.event !== "" ? (
+      {event?.event !== undefined ? (
         <Box>
           <Typography sx={{ fontWeight: "bold", fontSize: "20px" }}>
             Currently Selected: {event.tournament} - {event.event}

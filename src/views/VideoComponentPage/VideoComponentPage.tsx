@@ -1,9 +1,9 @@
 import { ThemeProvider } from "@mui/material";
 
-import VideoComponent from "../../components/App/VideoComponent";
+import VideoComponent from "../../components/VideoComponent";
 import { useTwitchData, useTwitchTheme } from "@services/Twitch";
 
-const App: React.FC = () => {
+const VideoComponentPage: React.FC = () => {
   const theme = useTwitchTheme();
   useTwitchData();
 
@@ -16,4 +16,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default VideoComponentPage;

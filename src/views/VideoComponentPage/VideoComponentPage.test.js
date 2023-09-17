@@ -1,10 +1,10 @@
 import ShallowRenderer from "react-test-renderer/shallow";
-import App from "./App";
+import VideoComponentPage from "./VideoComponentPage";
 
-describe("App Test Suite", () => {
+describe("VideoComponentPage Test Suite", () => {
   test("renders without failing", () => {
     const renderer = new ShallowRenderer();
-    renderer.render(<App />);
+    renderer.render(<VideoComponentPage />);
     const view = renderer.getRenderOutput();
 
     expect(view.type).toBe("div");

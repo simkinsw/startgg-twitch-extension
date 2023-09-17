@@ -9,11 +9,11 @@ import { type StartGGEvent } from "@services/StartGG";
 
 const LiveConfig: React.FC = () => {
   const token = useSelector((state: RootState) => state.app.apiToken);
-  const event: StartGGEvent = useSelector(
+  const event: StartGGEvent | undefined = useSelector(
     (state: RootState) => state.data.startGGEvent,
   );
 
-  const completedTasks = [token !== "", event.event !== ""].filter(
+  const completedTasks = [token !== "", event?.event !== undefined].filter(
     Boolean,
   ).length;
 
@@ -48,7 +48,10 @@ const LiveConfig: React.FC = () => {
           <TokenConfig />
         </ConfigCard>
 
-        <ConfigCard heading="Select Event" completed={event.event !== ""}>
+        <ConfigCard
+          heading="Select Event"
+          completed={event?.event !== undefined}
+        >
           <EventConfig />
         </ConfigCard>
 
