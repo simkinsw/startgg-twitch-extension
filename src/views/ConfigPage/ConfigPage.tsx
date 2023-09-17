@@ -1,6 +1,6 @@
 import { ThemeProvider } from "@mui/material";
 import Config from "../../components/Config";
-import useTwitchTheme from "../../hooks/useTwitchTheme";
+import { useTwitchTheme } from "@services/Twitch";
 
 const ConfigPage: React.FC = () => {
   const theme = useTwitchTheme();
