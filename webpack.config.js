@@ -10,19 +10,19 @@ const bundlePath = path.resolve(__dirname, "dist/");
 module.exports = (_env, argv) => {
   let entryPoints = {
     VideoComponent: {
-      path: "./src/VideoComponent.js",
+      path: "./src/views/VideoComponentPage/index.tsx",
       outputHtml: "video_component.html",
       build: true,
       title: "QuickStartGG Component",
     },
     Config: {
-      path: "./src/Config.js",
+      path: "./src/views/ConfigPage/index.tsx",
       outputHtml: "config.html",
       build: true,
       title: "QuickStartGG Config",
     },
     LiveConfig: {
-      path: "./src/LiveConfig.js",
+      path: "./src/views/LiveConfigPage/index.tsx",
       outputHtml: "live_config.html",
       build: true,
       title: "QuickStartGG Live Config",

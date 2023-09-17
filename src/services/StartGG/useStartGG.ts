@@ -10,7 +10,7 @@ const useStartGG = (refreshIntervalMs: number): void => {
   const dispatch = useDispatch();
 
   const apiToken = useSelector((state: RootState) => state.app.apiToken);
-  const eventId = useSelector(
+  const eventId: string | undefined = useSelector(
     (state: RootState) => state.data.startGGEvent?.id,
   );
 

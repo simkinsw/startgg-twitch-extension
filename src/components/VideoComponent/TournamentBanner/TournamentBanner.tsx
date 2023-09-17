@@ -4,17 +4,17 @@ import { useSelector } from "react-redux";
 import { type RootState } from "../../../redux/LiveConfig/store";
 
 const TournamentBanner: React.FC = () => {
-  const tournament = useSelector(
-    (state: RootState) => state.data.startGGEvent.tournament,
+  const tournament: string | undefined = useSelector(
+    (state: RootState) => state.data.startGGEvent?.tournament,
   );
-  const event = useSelector(
-    (state: RootState) => state.data.startGGEvent.event,
+  const event: string | undefined = useSelector(
+    (state: RootState) => state.data.startGGEvent?.event,
   );
-  const imageUrl = useSelector(
-    (state: RootState) => state.data.startGGEvent.imageUrl,
+  const imageUrl: string | undefined = useSelector(
+    (state: RootState) => state.data.startGGEvent?.imageUrl,
   );
-  const startggUrl = useSelector(
-    (state: RootState) => state.data.startGGEvent.startggUrl,
+  const startggUrl: string | undefined = useSelector(
+    (state: RootState) => state.data.startGGEvent?.startggUrl,
   );
 
   return (
@@ -43,7 +43,7 @@ const TournamentBanner: React.FC = () => {
       <Button
         variant="contained"
         disableRipple
-        href={startggUrl}
+        href={startggUrl ?? ""}
         disableElevation
         color="secondary"
         target="_blank"
