@@ -5,9 +5,10 @@ import EventConfig from "./EventConfig";
 import Admin from "./Admin";
 import { useSelector } from "react-redux";
 import { type RootState } from "../../redux/LiveConfig/store";
-import { type StartGGEvent } from "@services/StartGG";
+import { type StartGGEvent, useStartGG } from "@services/StartGG";
 
 const LiveConfig: React.FC = () => {
+  const status = useStartGG(30000);
   const token = useSelector((state: RootState) => state.app.apiToken);
   const event: StartGGEvent | undefined = useSelector(
     (state: RootState) => state.data.startGGEvent,
@@ -53,6 +54,15 @@ const LiveConfig: React.FC = () => {
           completed={event?.event !== undefined}
         >
           <EventConfig />
+        </ConfigCard>
+
+        <ConfigCard
+          heading="Set Data"
+          completed={status.isSuccess && !status.isError}
+        >
+          <Typography variant="subtitle1">
+            <pre>{JSON.stringify(status, null, 2)}</pre>
+          </Typography>
         </ConfigCard>
 
         {process.env.NODE_ENV === "development" ? (

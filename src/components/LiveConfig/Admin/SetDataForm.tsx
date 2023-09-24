@@ -88,7 +88,9 @@ const SetDataForm: React.FC = () => {
           marginTop: theme.spacing(3),
           marginBottom: theme.spacing(5),
         }}
-        onSubmit={() => handleSubmit}
+        onSubmit={(event) => {
+          void handleSubmit(event);
+        }}
       >
         <TextField
           sx={{ flexBasis: "45%" }}

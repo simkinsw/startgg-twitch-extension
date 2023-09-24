@@ -19,7 +19,6 @@ const twitch = window.Twitch?.ext;
 
 const updateConfigStore = async (newState: DataState): Promise<void> => {
   if (newState.startGGEvent === undefined) {
-    console.log("Skipping updating config store due to empty event");
     return;
   }
 
