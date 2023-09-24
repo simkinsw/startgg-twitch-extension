@@ -7,6 +7,7 @@ import { setLastUpdate } from "../../../redux/LiveConfig/app";
 import { type RootState } from "../../../redux/LiveConfig/store";
 import { useTheme } from "@mui/material/styles";
 
+// TODO: Clear errors on new entry
 const EventConfig: React.FC = () => {
   const [url, setUrl] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -26,14 +27,10 @@ const EventConfig: React.FC = () => {
     setLoading(true);
     try {
       const ggEvent = await getEvent(token, url);
-      if (ggEvent !== undefined) {
-        dispatch(setLastUpdate(0));
-        dispatch(setStartGGEvent(ggEvent));
-      } else {
-        setError("Failed to find event");
-      }
+      dispatch(setLastUpdate(0));
+      dispatch(setStartGGEvent(ggEvent));
     } catch (error) {
-      setError("Error while fetching event");
+      setError(`${error as string}`);
     }
     setUrl("");
     setLoading(false);
@@ -68,7 +65,7 @@ const EventConfig: React.FC = () => {
         <Typography>
           Paste the full start.gg link for the event you are streaming.
           <br />
-          Make sure your link includes the part after &quot/event/&quot.
+          Make sure your link includes the part after &quot;/event/&quot;.
         </Typography>
       ) : (
         <Typography color="secondary.light">
@@ -83,7 +80,9 @@ const EventConfig: React.FC = () => {
           marginBottom: theme.spacing(5),
           height: "4.8rem",
         }}
-        onSubmit={() => handleSubmit}
+        onSubmit={(event) => {
+          void handleSubmit(event);
+        }}
       >
         <TextField
           id="event-input"

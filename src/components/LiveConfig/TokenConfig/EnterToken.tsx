@@ -93,7 +93,9 @@ const EnterToken: React.FC = () => {
           marginBottom: theme.spacing(5),
           height: "4.8rem",
         }}
-        onSubmit={() => handleSubmit}
+        onSubmit={(event) => {
+          void handleSubmit(event);
+        }}
       >
         <TextField
           id="token-input"

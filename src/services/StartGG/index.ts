@@ -15,8 +15,13 @@ interface Query<T> {
   variables: T;
 }
 
-interface Data<T> {
-  data: T;
+interface GQLError {
+  message: string,
+}
+
+interface GQLResponse<T> {
+  data: T,
+  errors?: GQLError[]
 }
 
 export interface StartGGEvent {
@@ -33,7 +38,7 @@ const api = "https://api.start.gg/gql/alpha";
 export const query = async <T, Q>(
   apiToken: string,
   query: Query<Q>,
-): Promise<Data<T>> => {
+): Promise<GQLResponse<T>> => {
   return await queryWithRetry(apiToken, query, 30000, 3);
 };
 
@@ -42,7 +47,7 @@ export const queryWithRetry = async <T, Q>(
   query: Query<Q>,
   delay: number,
   retries: number,
-): Promise<Data<T>> => {
+): Promise<GQLResponse<T>> => {
   const response = await fetch(api, {
     method: "POST",
     headers: {
@@ -90,61 +95,58 @@ export const validateToken = async (token: string): Promise<boolean> => {
 export const getEvent = async (
   apiToken: string,
   url: string,
-): Promise<StartGGEvent | undefined> => {
-  try {
-    // TODO: I have the feeling that this could be improved...
-    const index = url.indexOf("tournament");
-    let slug = url.slice(index);
-    slug = slug.split("/").slice(0, 4).join("/");
+): Promise<StartGGEvent> => {
+  // TODO: I have the feeling that this could be improved...
+  const index = url.indexOf("tournament");
+  let slug = url.slice(index);
+  slug = slug.split("/").slice(0, 4).join("/");
 
-    console.log(slug);
-
-    const input: Query<GetEventQueryVariables> = {
-      query: gql`
-        query GetEvent($slug: String) {
-          event(slug: $slug) {
-            id
+  const input: Query<GetEventQueryVariables> = {
+    query: gql`
+      query GetEvent($slug: String) {
+        event(slug: $slug) {
+          id
+          name
+          tournament {
             name
-            tournament {
-              name
-              images {
-                type
-                url
-              }
+            images {
+              type
+              url
             }
-            entrants(query: { page: 1, perPage: 1 }) {
-              pageInfo {
-                totalPages
-              }
+          }
+          entrants(query: { page: 1, perPage: 1 }) {
+            pageInfo {
+              totalPages
             }
           }
         }
-      `,
-      variables: { slug },
-    };
+      }
+    `,
+    variables: { slug },
+  };
 
-    const response = await query<
-      DeepNonNullable<GetEventQuery>,
-      GetEventQueryVariables
-    >(apiToken, input);
+  const response = await query<
+    DeepNonNullable<GetEventQuery>,
+    GetEventQueryVariables
+  >(apiToken, input);
 
-    const imageUrl =
-      response.data.event.tournament.images.find(
-        (image: any) => image.type === "profile",
-      )?.url ?? "";
-
-    return {
-      tournament: response.data.event.tournament.name,
-      event: response.data.event.name,
-      id: response.data.event.id,
-      entrantCount: response.data.event.entrants.pageInfo.totalPages,
-      imageUrl,
-      startggUrl: url,
-    } satisfies StartGGEvent;
-  } catch (error) {
-    console.error("Error while fetching event:", error);
-    return undefined;
+  if (response.errors !== undefined) {
+    throw new Error(response.errors[0].message);
   }
+
+  const imageUrl =
+    response.data.event.tournament.images.find(
+      (image: any) => image.type === "profile",
+    )?.url ?? "";
+
+  return {
+    tournament: response.data.event.tournament.name,
+    event: response.data.event.name,
+    id: response.data.event.id,
+    entrantCount: response.data.event.entrants.pageInfo.totalPages,
+    imageUrl,
+    startggUrl: url,
+  } satisfies StartGGEvent;
 };
 
 export const getSets = async (
@@ -202,41 +204,31 @@ export const getSets = async (
     }
   `;
   const results: SetData[] = [];
-  try {
-    // Add a 2 minute buffer to favor duplicates over missing data (completedAt vs updatedAfter is a little inconsistent)
-    let page = 1;
-    let pages = 0;
-    do {
-      if (pages === 0) {
-        console.log(`Refreshing data`);
-      } else {
-        console.log(`Getting page ${page}/${pages}`);
-      }
+  // Add a 2 minute buffer to favor duplicates over missing data (completedAt vs updatedAfter is a little inconsistent)
+  let page = 1;
+  let pages = 0;
+  do {
+    const input: Query<GetSetsQueryVariables> = {
+      query: queryString,
+      variables: {
+        eventId,
+        lastUpdate,
+        page,
+      },
+    };
 
-      const input: Query<GetSetsQueryVariables> = {
-        query: queryString,
-        variables: {
-          eventId,
-          lastUpdate,
-          page,
-        },
-      };
+    const response = await query<
+      DeepNonNullable<GetSetsQuery>,
+      GetSetsQueryVariables
+    >(apiToken, input);
+    pages = response.data.event.sets.pageInfo.totalPages;
+    response.data.event.sets.nodes.forEach((set) => {
+      const converted: SetData = convertSet(set);
 
-      const response = await query<
-        DeepNonNullable<GetSetsQuery>,
-        GetSetsQueryVariables
-      >(apiToken, input);
-      pages = response.data.event.sets.pageInfo.totalPages;
-      response.data.event.sets.nodes.forEach((set) => {
-        const converted: SetData = convertSet(set);
-
-        results.push(converted);
-      });
-      page += 1;
-    } while (page <= pages);
-  } catch (error) {
-    console.error(`Failed to refresh data: ${error as string}`);
-  }
+      results.push(converted);
+    });
+    page += 1;
+  } while (page <= pages);
   return results;
 };
 
